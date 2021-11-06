@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Data\Entities\User;
+use App\Data\Views\PagedView;
 use App\Repositories\Users\UserRepositoryInterface;
 
 class UserService
@@ -25,21 +26,31 @@ class UserService
     /**
      * The get all users service
      * 
-     * @return array The array of @see User
+     * @return iterable The iterable of @see User
      */
-    public function getAll(): array
+    public function getAll(): iterable
     {
         return $this->userRepository->getAll();
     }
 
     /**
+     * The get all users service with pagination
+     * 
+     * @return PagedView The @see PagedView of iterable @see User
+     */
+    public function getAllWithPagination(int $limit, int $pageNumber): PagedView
+    {
+        return $this->userRepository->getAllWithPagination($limit, $pageNumber);
+    }
+
+    /**
      * The get specified user by id service
      * 
-     * @param string $id The specified user's id
+     * @param int $id The specified user's id
      * 
      * @return User The specified user
      */
-    public function get(string $id): User
+    public function get(int $id): ?User
     {
         return $this->userRepository->get($id);
     }

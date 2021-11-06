@@ -2,6 +2,8 @@
 
 namespace App\Controllers\v1;
 
+use App\Messages\Responses\Users\UserDetailResponse;
+use App\Messages\Responses\Users\UserPagedResponse;
 use App\Services\UserService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -32,9 +34,15 @@ final class UserController
      * 
      * @return Response
      */
-    public function getAll(Request $request, Response $response, array $args): Response
+    public function getAll(Request $request, Response $response): Response
     {
-        $response->getBody()->write(json_encode($this->userService->getAll()));
+        $queryParams = $request->getQueryParams();
+        
+        $limit = (isset($queryParams['limit']) && $queryParams > 0) ? $queryParams['limit'] : 5;
+        $pageNumber = (isset($queryParams['pageNumber']) && $queryParams > 0) ? $queryParams['pageNumber'] : 1;
+        
+        $users = new UserPagedResponse($this->userService->getAllWithPagination($limit, $pageNumber));
+        $response->getBody()->write((string)json_encode($users));
 
         return $response;
     }
@@ -50,8 +58,10 @@ final class UserController
      */
     public function get(Request $request, Response $response, array $args): Response
     {
-        $user = $this->userService->get($args['id']);
-        $response->getBody()->write(json_encode($user));
+        $id = $args['id'];
+
+        $user = new UserDetailResponse($this->userService->get($id));
+        $response->getBody()->write((string)json_encode($user));
 
         return $response;
     }
