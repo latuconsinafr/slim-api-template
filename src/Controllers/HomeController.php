@@ -2,10 +2,10 @@
 
 namespace App\Controllers;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
-class HomeController
+final class HomeController
 {
 
     /**
@@ -15,17 +15,16 @@ class HomeController
     {
     }
 
-
     /**
      * The index
      * 
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param array $args
+     * @param Request $request The request
+     * @param Response $response The response
+     * @param array $args The query parameters
      * 
-     * @return ResponseInterface
+     * @return Response
      */
-    public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function index(Request $request, Response $response, array $args): Response
     {
         return $response;
     }
