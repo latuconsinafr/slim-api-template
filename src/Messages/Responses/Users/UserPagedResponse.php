@@ -2,19 +2,19 @@
 
 namespace App\Messages\Responses\Users;
 
-use App\Data\Views\PagedView;
 use App\Messages\Responses\PagedResponse;
+use ArrayIterator;
 
 class UserPagedResponse
 {
     public PagedResponse $pageInfo;
     public iterable $results;
 
-    public function __construct(PagedView $pagedView)
+    public function __construct(iterable $result, int $limit, int $pageNumber)
     {
-        $this->pageInfo = new PagedResponse($pagedView->limit, $pagedView->pageNumber, $pagedView->count);
+        $this->pageInfo = new PagedResponse($limit, $pageNumber, iterator_count(new ArrayIterator($result)));
 
-        foreach ($pagedView->result as $user) {
+        foreach ($result as $user) {
             $this->results[] = new UserDetailResponse($user);
         }
     }

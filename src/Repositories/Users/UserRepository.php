@@ -3,11 +3,13 @@
 namespace App\Repositories\Users;
 
 use App\Data\Entities\User;
-use App\Data\Views\PagedView;
 use Cycle\ORM\ORM;
 use Cycle\ORM\RepositoryInterface;
 use Spiral\Pagination\Paginator;
 
+/**
+ * The user repository
+ */
 class UserRepository implements UserRepositoryInterface
 {
     /**
@@ -24,23 +26,17 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /** @inheritdoc */
-    public function getAll(): iterable
+    public function getAll(?int $limit = null, ?int $pageNumber = null): iterable
     {
-        return $this->repository->findAll();
-    }
+        if (!is_int($limit) || !is_int($pageNumber)) {
+            return $this->repository->findAll();
+        }
 
-    /** @inheritdoc */
-    public function getAllWithPagination(int $limit, int $pageNumber): PagedView
-    {
         $select = $this->repository->select();
         $paginator = new Paginator($limit);
         $paginator->withPage($pageNumber)->paginate($select)->countPages();
-        
-        return new PagedView(
-            $select->fetchAll(),
-            $limit,
-            $pageNumber,
-        );
+
+        return $select->fetchAll();
     }
 
     /** @inheritdoc */

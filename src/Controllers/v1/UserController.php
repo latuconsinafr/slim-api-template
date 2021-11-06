@@ -41,7 +41,11 @@ final class UserController
         $limit = (isset($queryParams['limit']) && $queryParams > 0) ? $queryParams['limit'] : 5;
         $pageNumber = (isset($queryParams['pageNumber']) && $queryParams > 0) ? $queryParams['pageNumber'] : 1;
         
-        $users = new UserPagedResponse($this->userService->getAllWithPagination($limit, $pageNumber));
+        $users = new UserPagedResponse(
+            $this->userService->getAll($limit, $pageNumber),
+            $limit,
+            $pageNumber
+        );
         $response->getBody()->write((string)json_encode($users));
 
         return $response;
