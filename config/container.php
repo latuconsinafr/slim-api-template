@@ -15,6 +15,10 @@ use Cycle\Schema\Generator\{
     ValidateEntities
 };
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Selective\Validation\Encoder\JsonEncoder;
+use Selective\Validation\Middleware\ValidationExceptionMiddleware;
+use Selective\Validation\Transformer\ErrorDetailsResultTransformer;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Spiral\Database\{DatabaseManager};
@@ -22,6 +26,7 @@ use Spiral\Database\Config\{DatabaseConfig};
 use Spiral\Database\Exception\{ConfigException};
 use Spiral\Tokenizer\ClassLocator;
 use Symfony\Component\Finder\Finder;
+
 
 return [
     // Application settings
@@ -82,7 +87,26 @@ return [
         return $orm;
     },
 
-    // Repositories definition with PDO injection
+    // Validation exception middleware definition with container interface injection
+    ValidationExceptionMiddleware::class => function (ContainerInterface $container) {
+        $factory = $container->get(ResponseFactoryInterface::class);
+
+        return new ValidationExceptionMiddleware(
+            $factory,
+            new ErrorDetailsResultTransformer(),
+            new JsonEncoder()
+        );
+    },
+
+    // Response factory definition with container interface injection
+    ResponseFactoryInterface::class => function (ContainerInterface $container) {
+        $app = $container->get(App::class);
+
+        return $app->getResponseFactory();
+    },
+
+
+    // Repositories definition with user repository injection
     UserRepositoryInterface::class => DI\create(UserRepository::class)
         ->constructor(DI\get(ORM::class))
 ];

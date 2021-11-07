@@ -16,10 +16,11 @@ return function (App $app) {
         '/api/v1',
         function (Group $app) {
             // Users
-            $app->group('/users', function (Group $group) {
-                $group->get('', [UserController::class, 'getAll']);
-                $group->get('/{id}', [UserController::class, 'get']);
-            });
+            $app->get('/users', [UserController::class, 'getUsers']);
+            $app->post('/users', [UserController::class, 'createUser']);
+            $app->get('/users/{id}', [UserController::class, 'getUserById']);
+            $app->put('/users/{id}', [UserController::class, 'updateUser']);
+            $app->delete('/users/{id}', [UserController::class, 'deleteUser']);
         }
     );
 };
