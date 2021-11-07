@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Data\Entities\User;
 use App\Repositories\Users\UserRepositoryInterface;
 
+/**
+ * The user service
+ */
 class UserService
 {
     /**
@@ -25,21 +28,24 @@ class UserService
     /**
      * The get all users service
      * 
-     * @return array The array of @see User
+     * @param int|null $limit The page limit for pagination
+     * @param int|null $pageNumber The current page number for pagination
+     * 
+     * @return iterable The iterable of @see User
      */
-    public function getAll(): array
+    public function getAll(?int $limit = null, ?int $pageNumber = null): iterable
     {
-        return $this->userRepository->getAll();
+        return $this->userRepository->getAll($limit, $pageNumber);
     }
 
     /**
      * The get specified user by id service
      * 
-     * @param string $id The specified user's id
+     * @param int $id The specified user's id
      * 
      * @return User The specified user
      */
-    public function get(string $id): User
+    public function get(int $id): ?User
     {
         return $this->userRepository->get($id);
     }

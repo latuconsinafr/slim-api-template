@@ -4,21 +4,27 @@ namespace App\Repositories\Users;
 
 use App\Data\Entities\User;
 
+/**
+ * The user repository interface
+ */
 interface UserRepositoryInterface
 {
     /**
-     * The get all users repository
+     * The get all users with pagination repository
      * 
-     * @return array The array of @see User
+     * @param int|null $limit The page limit for pagination
+     * @param int|null $pageNumber The current page number for pagination
+     * 
+     * @return iterable The iterable of @see User
      */
-    public function getAll(): array;
+    public function getAll(?int $limit = null, ?int $pageNumber = null): iterable;
 
     /**
      * The get specified user by id repository
      * 
-     * @param string $id The specified user's id
+     * @param int $id The specified user's id
      * 
      * @return User The specified user
      */
-    public function get(string $id): User;
+    public function get(int $id): ?User;
 }

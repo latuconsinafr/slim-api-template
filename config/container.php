@@ -2,9 +2,26 @@
 
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Users\UserRepositoryInterface;
+use Cycle\Annotated\{Embeddings, Entities, MergeColumns, MergeIndexes};
+use Cycle\ORM\{Factory, ORM, Schema as OrmSchema};
+use Cycle\Schema\{Compiler, Registry};
+use Cycle\Schema\Generator\{
+    GenerateRelations,
+    GenerateTypecast,
+    RenderRelations,
+    RenderTables,
+    ResetTables,
+    SyncTables,
+    ValidateEntities
+};
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
+use Spiral\Database\{DatabaseManager};
+use Spiral\Database\Config\{DatabaseConfig};
+use Spiral\Database\Exception\{ConfigException};
+use Spiral\Tokenizer\ClassLocator;
+use Symfony\Component\Finder\Finder;
 
 return [
     // Application settings
@@ -27,25 +44,45 @@ return [
         return $app;
     },
 
-    // PDO definition with container interface injection
-    PDO::class => function (ContainerInterface $container) {
-        $settings = $container->get('settings')['db'];
+    // ORM definition with container interface injection
+    ORM::class => function (ContainerInterface $container) {
+        $settings = $container->has('settings')
+            ? $container->get('settings')
+            : [];
 
-        $pdo = new PDO(
-            "{$settings['driver']}:
-            host={$settings['host']};
-            dbname={$settings['dbname']}",
-            $settings['username'],
-            $settings['password']
-        );
+        if (!isset($settings['database'])) {
+            throw new ConfigException('Expected database settings');
+        }
+        if (!isset($settings['entity'])) {
+            throw new ConfigException('Expected entity settings');
+        }
 
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $database = $container->get('settings')['database'];
+        $entity = $container->get('settings')['entity'];
 
-        return $pdo;
+        $finder = (new Finder())->files()->in([$entity]);
+        $classLocator = new ClassLocator($finder);
+        $database = new DatabaseManager(new DatabaseConfig($database));
+        $schema = (new Compiler())->compile(new Registry($database), [
+            new ResetTables(),              // re-declared table schemas (remove columns)
+            new Embeddings($classLocator),  // register embeddable entities
+            new Entities($classLocator),    // register annotated entities
+            new MergeColumns(),             // add @Table column declarations
+            new GenerateRelations(),        // generate entity relations
+            new ValidateEntities(),         // make sure all entity schemas are correct
+            new RenderTables(),             // declare table schemas
+            new RenderRelations(),          // declare relation keys and indexes
+            new MergeIndexes(),             // add @Table column declarations
+            new SyncTables(),               // sync table changes to database
+            new GenerateTypecast(),         // typecast non string columns
+        ]);
+        $orm = new ORM(new Factory($database));
+        $orm = $orm->withSchema(new OrmSchema($schema));
+
+        return $orm;
     },
 
-    // Repositories injection
+    // Repositories definition with PDO injection
     UserRepositoryInterface::class => DI\create(UserRepository::class)
-        ->constructor(DI\get(PDO::class))
+        ->constructor(DI\get(ORM::class))
 ];

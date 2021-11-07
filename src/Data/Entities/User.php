@@ -2,32 +2,44 @@
 
 namespace App\Data\Entities;
 
+use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Column;
+
+/**
+ * @Entity
+ */
 class User
 {
+    
     /**
-     * @var string The user's uuid
+     * @Column(type="primary")
+     * @var int
      */
-    public string $id;
+    protected int $id;
+    
+    /**
+     * @Column(type="string(32)", name="user_name", nullable=false)
+     * @var string
+     */
+    protected string $userName;
 
     /**
-     * @var string The user's username
+     * @Column(type="string(128)", nullable=true)
+     * @var string
      */
-    public string $userName;
+    protected ?string $email;
 
     /**
-     * @var string The user's e-mail
+     * @Column(type="string(32)", name="phone_number", nullable=true)
+     * @var string
      */
-    public ?string $email;
+    protected ?string $phoneNumber;
 
     /**
-     * @var string The user's phone number
+     * @Column(type="string(128)", nullable=false)
+     * @var string
      */
-    public ?string $phoneNumber;
-
-    /**
-     * @var string The user's password
-     */
-    private string $password;
+    protected string $password;
 
     /**
      * The constructor
@@ -39,9 +51,9 @@ class User
     /**
      * The id getter
      * 
-     * @return string
+     * @return int
      */
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }
@@ -61,7 +73,7 @@ class User
      * 
      * @return string
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -71,7 +83,7 @@ class User
      * 
      * @return string
      */
-    public function getPhoneNumber(): string
+    public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;
     }
@@ -89,11 +101,11 @@ class User
     /**
      * The id setter
      * 
-     * @param string $id The id to set to the user entity
+     * @param int $id The id to set to the user entity
      * 
      * @return void
      */
-    public function setId(string $id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -149,7 +161,7 @@ class User
     /**
      * The entity setter
      * 
-     * @param string $id The id to set to the user entity
+     * @param int $id The id to set to the user entity
      * @param string $userName The user name to set to the user entity
      * @param string $email The email to set to the user entity
      * @param string $phoneNumber The phone number to set to the user entity
@@ -158,7 +170,7 @@ class User
      * @return void
      */
     public function setEntity(
-        string $id,
+        int $id,
         string $userName,
         ?string $email,
         ?string $phoneNumber,

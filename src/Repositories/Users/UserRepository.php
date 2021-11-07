@@ -3,48 +3,45 @@
 namespace App\Repositories\Users;
 
 use App\Data\Entities\User;
-use PDO;
+use Cycle\ORM\ORM;
+use Cycle\ORM\RepositoryInterface;
+use Spiral\Pagination\Paginator;
 
+/**
+ * The user repository
+ */
 class UserRepository implements UserRepositoryInterface
 {
-    private PDO $database;
+    /**
+     * @var ORM
+     */
+    private RepositoryInterface $repository;
 
     /**
      * The constructor
      */
-    public function __construct(PDO $database)
+    public function __construct(ORM $orm)
     {
-        $this->database = $database;
+        $this->repository = $orm->getRepository(User::class);
     }
 
     /** @inheritdoc */
-    public function getAll(): array
+    public function getAll(?int $limit = null, ?int $pageNumber = null): iterable
     {
-        $sth = $this->database->prepare("SELECT * FROM users");
-        $sth->execute();
-
-        if ($sth->rowCount() > 0) {
-            return $sth->fetchAll(PDO::FETCH_CLASS, User::class);
-        } else {
-            return array();
+        if (!is_int($limit) || !is_int($pageNumber)) {
+            return $this->repository->findAll();
         }
+
+        $select = $this->repository->select();
+        $paginator = new Paginator($limit);
+        $paginator->withPage($pageNumber)->paginate($select)->countPages();
+
+        return $select->fetchAll();
     }
 
     /** @inheritdoc */
-    public function get(string $id): User
+    public function get(int $id): ?User
     {
-        $sth = $this->database->prepare("SELECT * FROM users WHERE id = :id");
-        $sth->execute([':id' => $id]);
-
-        if ($sth->rowCount() > 0) {
-            $data = $sth->fetch(PDO::FETCH_OBJ);
-
-            $user = new User();
-            $user->setEntity($data->id, $data->user_name, $data->email, $data->phone_number, $data->password);
-
-            return $user;
-        } else {
-            return new User();
-        }
+        return $this->repository->findByPK($id);
     }
 }
