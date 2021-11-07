@@ -8,8 +8,11 @@ use App\Messages\Requests\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
 use App\Messages\Responses\Users\UserPagedResponse;
 use App\Services\UserService;
+use App\Validators\Users\UserCreateRequestValidator;
+use App\Validators\Users\UserUpdateRequestValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Selective\Validation\Exception\ValidationException;
 
 /**
  * User Controller
@@ -103,7 +106,14 @@ final class UserController
      */
     public function createUser(Request $request, Response $response): Response
     {
-        $this->userService->createUser(new UserCreateRequest($request->getParsedBody()));
+        $data = $request->getParsedBody();
+        $validationResult = UserCreateRequestValidator::validate($data);
+
+        if ($validationResult->fails()) {
+            throw new ValidationException('Validation failed. Please check your input.', $validationResult);
+        }
+
+        $this->userService->createUser(new UserCreateRequest($data));
 
         return $response
             ->withHeader('Content-Type', 'application/json')
@@ -121,6 +131,13 @@ final class UserController
      */
     public function updateUser(Request $request, Response $response, array $args): Response
     {
+        $data = $request->getParsedBody();
+        $validationResult = UserUpdateRequestValidator::validate($data);
+
+        if ($validationResult->fails()) {
+            throw new ValidationException('Validation failed. Please check your input.', $validationResult);
+        }
+
         $id = $args['id'];
         $user = $this->userService->getUserById($id);
 
@@ -136,7 +153,7 @@ final class UserController
                 ->withStatus(409);
         }
 
-        $this->userService->updateUser(new UserUpdateRequest($request->getParsedBody()));
+        $this->userService->updateUser(new UserUpdateRequest($data));
 
         return $response
             ->withHeader('Content-Type', 'application/json')

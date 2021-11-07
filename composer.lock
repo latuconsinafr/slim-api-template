@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "26b579b83a1931262c4b589e16f98593",
+    "content-hash": "8ce1ad5242eddf80b660d20811e7d048",
     "packages": [
         {
             "name": "brick/math",
@@ -65,6 +65,176 @@
                 }
             ],
             "time": "2021-08-15T20:50:18+00:00"
+        },
+        {
+            "name": "cakephp/core",
+            "version": "4.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/core.git",
+                "reference": "4726edc33d282c833b948618ca58b776db89de53"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/core/zipball/4726edc33d282c833b948618ca58b776db89de53",
+                "reference": "4726edc33d282c833b948618ca58b776db89de53",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/utility": "^4.0",
+                "php": ">=7.2.0"
+            },
+            "suggest": {
+                "cakephp/cache": "To use Configure::store() and restore().",
+                "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
+                "league/container": "To use Container and ServiceProvider classes"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cake\\Core\\": "."
+                },
+                "files": [
+                    "functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CakePHP Community",
+                    "homepage": "https://github.com/cakephp/core/graphs/contributors"
+                }
+            ],
+            "description": "CakePHP Framework Core classes",
+            "homepage": "https://cakephp.org",
+            "keywords": [
+                "cakephp",
+                "core",
+                "framework"
+            ],
+            "support": {
+                "forum": "https://stackoverflow.com/tags/cakephp",
+                "irc": "irc://irc.freenode.org/cakephp",
+                "issues": "https://github.com/cakephp/cakephp/issues",
+                "source": "https://github.com/cakephp/core"
+            },
+            "time": "2021-10-26T20:01:16+00:00"
+        },
+        {
+            "name": "cakephp/utility",
+            "version": "4.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/utility.git",
+                "reference": "fee2cf64752ac2516af6ac86c95e3e961a8ead7f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/utility/zipball/fee2cf64752ac2516af6ac86c95e3e961a8ead7f",
+                "reference": "fee2cf64752ac2516af6ac86c95e3e961a8ead7f",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/core": "^4.0",
+                "php": ">=7.2.0"
+            },
+            "suggest": {
+                "ext-intl": "To use Text::transliterate() or Text::slug()",
+                "lib-ICU": "To use Text::transliterate() or Text::slug()"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cake\\Utility\\": "."
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CakePHP Community",
+                    "homepage": "https://github.com/cakephp/utility/graphs/contributors"
+                }
+            ],
+            "description": "CakePHP Utility classes such as Inflector, String, Hash, and Security",
+            "homepage": "https://cakephp.org",
+            "keywords": [
+                "cakephp",
+                "hash",
+                "inflector",
+                "security",
+                "string",
+                "utility"
+            ],
+            "support": {
+                "forum": "https://stackoverflow.com/tags/cakephp",
+                "irc": "irc://irc.freenode.org/cakephp",
+                "issues": "https://github.com/cakephp/cakephp/issues",
+                "source": "https://github.com/cakephp/utility"
+            },
+            "time": "2021-10-26T20:01:16+00:00"
+        },
+        {
+            "name": "cakephp/validation",
+            "version": "4.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/validation.git",
+                "reference": "dc2bc47ea610ebc27c1c31c5c88ad1443deaac3f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/validation/zipball/dc2bc47ea610ebc27c1c31c5c88ad1443deaac3f",
+                "reference": "dc2bc47ea610ebc27c1c31c5c88ad1443deaac3f",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/core": "^4.0",
+                "cakephp/utility": "^4.0",
+                "php": ">=7.2.0",
+                "psr/http-message": "^1.0.0"
+            },
+            "suggest": {
+                "cakephp/i18n": "If you want to use Validation::localizedTime()"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cake\\Validation\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CakePHP Community",
+                    "homepage": "https://github.com/cakephp/validation/graphs/contributors"
+                }
+            ],
+            "description": "CakePHP Validation library",
+            "homepage": "https://cakephp.org",
+            "keywords": [
+                "cakephp",
+                "data validation",
+                "validation"
+            ],
+            "support": {
+                "forum": "https://stackoverflow.com/tags/cakephp",
+                "irc": "irc://irc.freenode.org/cakephp",
+                "issues": "https://github.com/cakephp/cakephp/issues",
+                "source": "https://github.com/cakephp/validation"
+            },
+            "time": "2021-10-26T20:01:16+00:00"
         },
         {
             "name": "cycle/annotated",
@@ -1758,6 +1928,62 @@
                 }
             ],
             "time": "2021-09-25T23:10:38+00:00"
+        },
+        {
+            "name": "selective/validation",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/selective-php/validation.git",
+                "reference": "1279f5299d0b50dec0701ca7c496f79dee997ef6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/selective-php/validation/zipball/1279f5299d0b50dec0701ca7c496f79dee997ef6",
+                "reference": "1279f5299d0b50dec0701ca7c496f79dee997ef6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.2 || ^8.0",
+                "psr/http-factory": "^1.0.1",
+                "psr/http-server-middleware": "^1.0.1"
+            },
+            "require-dev": {
+                "cakephp/validation": "^4.2",
+                "fig/http-message-util": "^1.1",
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "nyholm/psr7": "^1.4",
+                "overtrue/phplint": "^1.1",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^8 || ^9",
+                "relay/relay": "^2.0",
+                "slim/psr7": "^1",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Selective\\Validation\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Validation error collector and transformer",
+            "keywords": [
+                "middleware",
+                "psr15",
+                "slim",
+                "slim4",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/selective-php/validation/issues",
+                "source": "https://github.com/selective-php/validation/tree/2.0.0"
+            },
+            "time": "2021-09-04T23:02:44+00:00"
         },
         {
             "name": "slim/psr7",
