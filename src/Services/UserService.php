@@ -4,23 +4,25 @@ namespace App\Services;
 
 use App\Data\Entities\User;
 use App\Messages\Requests\UserCreateRequest;
+use App\Messages\Requests\Users\UserCreateRequest as UsersUserCreateRequest;
+use App\Messages\Requests\Users\UserUpdateRequest as UsersUserUpdateRequest;
 use App\Messages\Requests\UserUpdateRequest;
 use App\Repositories\Users\UserRepositoryInterface;
 
 /**
- * The user service
+ * The user service.
  */
 class UserService
 {
     /**
-     * @var UserRepositoryInterface The user repository interface
+     * @var UserRepositoryInterface The user repository interface.
      */
     private UserRepositoryInterface $userRepository;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param UserRepositoryInterface $userRepository The user repository
+     * @param UserRepositoryInterface $userRepository The user repository.
      */
     public function __construct(UserRepositoryInterface $userRepository)
     {
@@ -28,12 +30,12 @@ class UserService
     }
 
     /**
-     * The get all users service
+     * The get all users service.
      * 
-     * @param int|null $limit The page limit for pagination
-     * @param int|null $pageNumber The current page number for pagination
+     * @param int|null $limit The page limit for pagination.
+     * @param int|null $pageNumber The current page number for pagination.
      * 
-     * @return iterable The iterable of @see User
+     * @return iterable The iterable of @see User.
      */
     public function getUsers(?int $limit = null, ?int $pageNumber = null): iterable
     {
@@ -41,11 +43,11 @@ class UserService
     }
 
     /**
-     * The get specified user by id service
+     * The get specified user by id service.
      * 
-     * @param string $id The specified user's id
+     * @param string $id The specified user's id.
      * 
-     * @return User The specified user
+     * @return User The specified user.
      */
     public function getUserById(string $id): ?User
     {
@@ -53,33 +55,33 @@ class UserService
     }
 
     /**
-     * The create user service
+     * The create user service.
      * 
-     * @param UserCreateRequest $request The create request
+     * @param UserCreateRequest $request The create request.
      * 
      * @return void
      */
-    public function createUser(UserCreateRequest $request): void
+    public function createUser(UsersUserCreateRequest $request): void
     {
         $this->userRepository->add($request->toEntity());
     }
 
     /**
-     * The update specified user by id service
+     * The update specified user by id service.
      * 
-     * @param UserUpdateRequest $request The update request
+     * @param UserUpdateRequest $request The update request.
      * 
      * @return void
      */
-    public function updateUser(UserUpdateRequest $request): void
+    public function updateUser(UsersUserUpdateRequest $request): void
     {
         $this->userRepository->update($request->toEntity());
     }
 
     /**
-     * The delete specified user by id service
+     * The delete specified user by id service.
      * 
-     * @param string $id The specified user's id
+     * @param string $id The specified user's id.
      * 
      * @return void
      */

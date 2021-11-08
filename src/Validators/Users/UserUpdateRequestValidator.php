@@ -2,41 +2,46 @@
 
 namespace App\Validators\Users;
 
-use Selective\Validation\Factory\CakeValidationFactory;
-use Selective\Validation\ValidationResult;
+use App\Messages\Requests\Users\UserUpdateRequest;
+use App\Validators\BaseValidator;
 
 /**
- * Validator for user creation
+ * The validator for user update request.
  */
-class UserUpdateRequestValidator
+class UserUpdateRequestValidator extends BaseValidator
 {
     /**
-     * The constructor
+     * @var UserUpdateRequest The request collection to validate.
      */
-    public function __construct()
+    protected UserUpdateRequest $requestCollection;
+
+    /**
+     * The constructor.
+     * 
+     * @param UserUpdateRequest $request The request collection to validate.
+     */
+    public function __construct(UserUpdateRequest $requestCollection)
     {
+        parent::__construct($requestCollection->request);
+
+        $this->requestCollection = $requestCollection;
+        $this->rules();
     }
 
     /**
-     * The validate data function
+     * Set the validation rules.
      * 
-     * @param array $data The data to be validated
-     * 
-     * @return ValidationResult The validation result
+     * @return void
      */
-    public static function validate(array $data): ValidationResult
+    public function rules(): void
     {
-        $validationFactory = new CakeValidationFactory();
-        $validator = $validationFactory->createValidator();
+        $this->validator
+            ->requirePresence($this->requestCollection->id);
 
-        $validator
-            ->requirePresence('userName');
+        $this->validator
+            ->requirePresence($this->requestCollection->userName);
 
-        $validator
-            ->requirePresence('password');
-
-        return $validationFactory->createValidationResult(
-            $validator->validate($data)
-        );
+        $this->validator
+            ->requirePresence($this->requestCollection->password);
     }
 }

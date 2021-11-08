@@ -10,24 +10,24 @@ use Spiral\Pagination\Paginator;
 use Spiral\Database\Exception\StatementException\{ConnectionException, ConstrainException};
 
 /**
- * The user repository
+ * The user repository.
  */
 class UserRepository implements UserRepositoryInterface
 {
     /**
-     * @var Transaction The cycle orm transaction
+     * @var Transaction The cycle orm transaction.
      */
     private Transaction $transaction;
 
     /**
-     * @var RepositoryInterface The cycle orm repository interface
+     * @var RepositoryInterface The cycle orm repository interface.
      */
     private RepositoryInterface $repository;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param ORM $orm
+     * @param ORM $orm.
      */
     public function __construct(ORM $orm)
     {
@@ -51,16 +51,16 @@ class UserRepository implements UserRepositoryInterface
         return $select->fetchAll();
     }
 
-    /** 
-     * {@inheritdoc} 
+    /**
+     * @inheritdoc
      */
     public function findById(string $id): ?User
     {
         return $this->repository->findByPK($id);
     }
 
-    /** 
-     * {@inheritdoc} 
+    /**
+     * @inheritdoc
      */
     public function add(User $user): void
     {
@@ -68,8 +68,8 @@ class UserRepository implements UserRepositoryInterface
         $this->run();
     }
 
-    /** 
-     * {@inheritdoc} 
+    /**
+     * @inheritdoc
      */
     public function update(User $user): void
     {

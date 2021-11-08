@@ -5,34 +5,34 @@ namespace App\Messages\Responses\Users;
 use App\Data\Entities\User;
 
 /**
- * Responder for single user data
+ * Responder for single user data.
  */
 class UserDetailResponse
 {
     /**
-     * @var string The user's id
+     * @var string The user's id.
      */
     public string $id;
 
     /**
-     * @var string The user's username
+     * @var string The user's username.
      */
     public string $userName;
 
     /**
-     * @var string|null The user's email address
+     * @var string|null The user's email address.
      */
     public ?string $email;
 
     /**
-     * @var string|null The user's phone number
+     * @var string|null The user's phone number.
      */
     public ?string $phoneNumber;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param User|null $user The user entity
+     * @param User|null $user The user entity.
      */
     public function __construct(?User $user)
     {

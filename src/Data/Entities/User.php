@@ -43,13 +43,13 @@ class User
     protected string $password;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param int $id
-     * @param string $userName
-     * @param string|null $email
-     * @param string|null $phoneNumber
-     * @param string $password
+     * @param int $id The user's id.
+     * @param string $userName The user's user name.
+     * @param string|null $email The user's e-mail.
+     * @param string|null $phoneNumber The user's phone number.
+     * @param string $password The user's password.
      */
     public function __construct(string $userName, ?string $email, ?string $phoneNumber, string $password, ?string $id = null)
     {
@@ -61,7 +61,7 @@ class User
     }
 
     /**
-     * The id getter
+     * The id getter.
      * 
      * @return string
      */
@@ -71,7 +71,7 @@ class User
     }
 
     /**
-     * The user name getter
+     * The user name getter.
      * 
      * @return string
      */
@@ -81,7 +81,7 @@ class User
     }
 
     /**
-     * The e-mail getter
+     * The e-mail getter.
      * 
      * @return string|null
      */
@@ -91,7 +91,7 @@ class User
     }
 
     /**
-     * The phone number getter
+     * The phone number getter.
      * 
      * @return string|null
      */
@@ -101,7 +101,7 @@ class User
     }
 
     /**
-     * The password getter
+     * The password getter.
      * 
      * @return string
      */
@@ -111,9 +111,9 @@ class User
     }
 
     /**
-     * The id setter
+     * The id setter.
      * 
-     * @param string $id The id to set to the user entity
+     * @param string $id The id to set to the user entity.
      * 
      * @return void
      */
@@ -123,9 +123,9 @@ class User
     }
 
     /**
-     * The user name setter
+     * The user name setter.
      * 
-     * @param string $userName The user name to set to the user entity
+     * @param string $userName The user name to set to the user entity.
      * 
      * @return void
      */
@@ -135,9 +135,9 @@ class User
     }
 
     /**
-     * The email setter
+     * The email setter.
      * 
-     * @param string $email The email to set to the user entity
+     * @param string $email The email to set to the user entity.
      * 
      * @return void
      */
@@ -147,9 +147,9 @@ class User
     }
 
     /**
-     * The phone number setter
+     * The phone number setter.
      * 
-     * @param string $phoneNumber The phone number to set to the user entity
+     * @param string $phoneNumber The phone number to set to the user entity.
      * 
      * @return void
      */
@@ -159,9 +159,9 @@ class User
     }
 
     /**
-     * The password setter
+     * The password setter.
      * 
-     * @param string $password The password to set to the user entity
+     * @param string $password The password to set to the user entity.
      * 
      * @return void
      */

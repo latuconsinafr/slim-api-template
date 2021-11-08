@@ -3,11 +3,11 @@
 namespace App\Controllers\v1;
 
 use App\Data\Entities\User;
-use App\Messages\Requests\UserCreateRequest;
-use App\Messages\Requests\UserUpdateRequest;
+use App\Messages\Requests\Users\UserCreateRequest;
+use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
 use App\Messages\Responses\Users\UserPagedResponse;
-use App\Services\UserService;
+use App\Repositories\Users\UserRepository;
 use App\Validators\Users\UserCreateRequestValidator;
 use App\Validators\Users\UserUpdateRequestValidator;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -15,33 +15,33 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Selective\Validation\Exception\ValidationException;
 
 /**
- * User Controller
+ * User Controller.
  */
 final class UserController
 {
     /**
-     * @var UserService The user service
+     * @var UserRepository The user repository.
      */
-    private UserService $userService;
+    private UserRepository $userRepository;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param UserService $userService
+     * @param UserRepository $userRepository.
      */
-    public function __construct(UserService $userService)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->userService = $userService;
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * The get all endpoint
+     * The get all endpoint.
      * 
-     * @param Request $request The request
-     * @param Response $response The response
-     * @param array $args The query parameters
+     * @param Request $request The request.
+     * @param Response $response The response.
+     * @param array $args The query parameters.
      * 
-     * @return Response
+     * @return Response The response.
      */
     public function getUsers(Request $request, Response $response): Response
     {
@@ -54,7 +54,7 @@ final class UserController
             ->getBody()
             ->write((string)json_encode(
                 new UserPagedResponse(
-                    $this->userService->getUsers($limit, $pageNumber),
+                    $this->userRepository->findAll($limit, $pageNumber),
                     $limit,
                     $pageNumber
                 )
@@ -66,18 +66,18 @@ final class UserController
     }
 
     /**
-     * The get by id endpoint
+     * The get by id endpoint.
      * 
-     * @param Request $request The request
-     * @param Response $response The response
-     * @param array $args The query parameters
+     * @param Request $request The request.
+     * @param Response $response The response.
+     * @param array $args The query parameters.
      * 
-     * @return Response
+     * @return Response The response.
      */
     public function getUserById(Request $request, Response $response, array $args): Response
     {
         $id = $args['id'];
-        $user = $this->userService->getUserById($id);
+        $user = $this->userRepository->findById($id);
 
         if (!$user instanceof User) {
             return $response
@@ -97,23 +97,23 @@ final class UserController
     }
 
     /**
-     * The create endpoint
+     * The create endpoint.
      * 
-     * @param Request $request The request
-     * @param Response $response The response
+     * @param Request $request The request.
+     * @param Response $response The response.
      * 
-     * @return Response
+     * @return Response The response.
      */
     public function createUser(Request $request, Response $response): Response
     {
-        $data = $request->getParsedBody();
-        $validationResult = UserCreateRequestValidator::validate($data);
+        $request = new UserCreateRequest($request->getParsedBody());
+        $validationResult = (new UserCreateRequestValidator($request))->validate();
 
         if ($validationResult->fails()) {
             throw new ValidationException('Validation failed. Please check your input.', $validationResult);
         }
 
-        $this->userService->createUser(new UserCreateRequest($data));
+        $this->userRepository->add($request->toEntity());
 
         return $response
             ->withHeader('Content-Type', 'application/json')
@@ -121,25 +121,32 @@ final class UserController
     }
 
     /**
-     * The update endpoint
+     * The update endpoint.
      * 
-     * @param Request $request The request
-     * @param Response $response The response
-     * @param array $args The query parameters
+     * @param Request $request The request.
+     * @param Response $response The response.
+     * @param array $args The query parameters.
      * 
-     * @return Response
+     * @return Response The response.
      */
     public function updateUser(Request $request, Response $response, array $args): Response
     {
-        $data = $request->getParsedBody();
-        $validationResult = UserUpdateRequestValidator::validate($data);
+        $request = new UserUpdateRequest($request->getParsedBody());
+        $validationResult = (new UserUpdateRequestValidator($request))->validate();
 
         if ($validationResult->fails()) {
             throw new ValidationException('Validation failed. Please check your input.', $validationResult);
         }
 
         $id = $args['id'];
-        $user = $this->userService->getUserById($id);
+
+        if ($request->id != $id) {
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(409);
+        }
+
+        $user = $this->userRepository->findById($id);
 
         if (!$user instanceof User) {
             return $response
@@ -147,13 +154,7 @@ final class UserController
                 ->withStatus(404);
         }
 
-        if ($user->getId() != $id) {
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(409);
-        }
-
-        $this->userService->updateUser(new UserUpdateRequest($data));
+        $this->userRepository->update($request->toEntity());
 
         return $response
             ->withHeader('Content-Type', 'application/json')
@@ -161,18 +162,18 @@ final class UserController
     }
 
     /**
-     * The delete endpoint
+     * The delete endpoint.
      * 
-     * @param Request $request The request
-     * @param Response $response The response
-     * @param array $args The query parameters
+     * @param Request $request The request.
+     * @param Response $response The response.
+     * @param array $args The query parameters.
      * 
-     * @return Response
+     * @return Response The response.
      */
     public function deleteUser(Request $request, Response $response, array $args): Response
     {
         $id = $args['id'];
-        $user = $this->userService->getUserById($id);
+        $user = $this->userRepository->findById($id);
 
         if (!$user instanceof User) {
             return $response
@@ -180,7 +181,7 @@ final class UserController
                 ->withStatus(404);
         }
 
-        $this->userService->deleteUser($id);
+        $this->userRepository->delete($id);
 
         return $response
             ->withHeader('Content-Type', 'application/json')

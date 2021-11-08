@@ -4,29 +4,28 @@ namespace App\Messages\Responses\Users;
 
 use App\Messages\Responses\PagedResponse;
 use ArrayIterator;
-use Illuminate\Support\Arr;
 
 /**
- * Responder for users data with pagination
+ * Responder for users data with pagination.
  */
 class UserPagedResponse
 {
     /**
-     * @var PagedResponse The page info for pagination
+     * @var PagedResponse The page info for pagination.
      */
     public PagedResponse $pageInfo;
 
     /**
-     * @var iterable The iterable of @see User
+     * @var iterable The iterable of @see User.
      */
     public iterable $results;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param iterable $result The iterable of @see User
-     * @param int $limit The page limit
-     * @param int $pageNumber The current page number
+     * @param iterable $result The iterable of @see User.
+     * @param int $limit The page limit.
+     * @param int $pageNumber The current page number.
      */
     public function __construct(iterable $result, int $limit, int $pageNumber)
     {
