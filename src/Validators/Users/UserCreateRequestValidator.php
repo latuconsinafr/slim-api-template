@@ -11,20 +11,20 @@ use App\Validators\BaseValidator;
 class UserCreateRequestValidator extends BaseValidator
 {
     /**
-     * @var UserCreateRequest The request collection to validate.
+     * @var UserCreateRequest The request to validate.
      */
-    protected UserCreateRequest $requestCollection;
+    protected UserCreateRequest $request;
 
     /**
      * The constructor.
      * 
-     * @param UserCreateRequest $request The request collection to validate.
+     * @param UserCreateRequest $request The request to validate.
      */
-    public function __construct(UserCreateRequest $requestCollection)
+    public function __construct(UserCreateRequest $request)
     {
-        parent::__construct($requestCollection->request);
+        parent::__construct($request->request);
 
-        $this->requestCollection = $requestCollection;
+        $this->request = $request;
         $this->rules();
     }
 
@@ -36,9 +36,9 @@ class UserCreateRequestValidator extends BaseValidator
     public function rules(): void
     {
         $this->validator
-            ->requirePresence($this->requestCollection->userName);
+            ->requirePresence($this->request->userName);
 
         $this->validator
-            ->requirePresence($this->requestCollection->password);
+            ->requirePresence($this->request->password);
     }
 }

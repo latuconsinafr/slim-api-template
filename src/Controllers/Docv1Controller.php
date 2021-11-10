@@ -5,11 +5,12 @@ namespace App\Controllers;
 use App\Supports\Responder\Responder;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Symfony\Component\Yaml\Yaml;
 
 /**
- * Home Controller.
+ * Doc v1 Controller.
  */
-final class HomeController
+final class Docv1Controller
 {
     /**
      * @var Responder The generic responder
@@ -35,6 +36,12 @@ final class HomeController
      */
     public function index(Request $request, Response $response, array $args): Response
     {
-        return $response;
+        $docv1 = __DIR__ . '/../../resources/api/docv1.yaml';
+
+        $viewData = [
+            'spec' => json_encode(Yaml::parseFile($docv1)),
+        ];
+
+        return $this->responder->withTemplate($response, 'doc/swagger.php', $viewData);
     }
 }

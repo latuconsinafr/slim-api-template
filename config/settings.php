@@ -2,8 +2,24 @@
 
 use Spiral\Database\Driver\MySQL\MySQLDriver;
 
+// Configure defaults for the whole application.
+
+// Error reporting
+error_reporting(0);
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
+
+// Timezone
+date_default_timezone_set('Asia/Jakarta');
+
 // Initialize settings
 $settings = [];
+
+// Path settings
+$settings['root'] = dirname(__DIR__);
+$settings['public'] = $settings['root'] . '/public';
+$settings['template'] = $settings['root'] . '/templates';
+$settings['entity'] = $settings['root'] . '/src/Data/Entities';
 
 // Database settings
 $settings['database'] = [
@@ -20,8 +36,5 @@ $settings['database'] = [
         ]
     ]
 ];
-
-// Entities location
-$settings['entity'] = __DIR__ . '/../src/Data/Entities';
 
 return $settings;

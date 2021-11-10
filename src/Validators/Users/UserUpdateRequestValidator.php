@@ -11,20 +11,20 @@ use App\Validators\BaseValidator;
 class UserUpdateRequestValidator extends BaseValidator
 {
     /**
-     * @var UserUpdateRequest The request collection to validate.
+     * @var UserUpdateRequest The request to validate.
      */
-    protected UserUpdateRequest $requestCollection;
+    protected UserUpdateRequest $request;
 
     /**
      * The constructor.
      * 
-     * @param UserUpdateRequest $request The request collection to validate.
+     * @param UserUpdateRequest $request The request to validate.
      */
-    public function __construct(UserUpdateRequest $requestCollection)
+    public function __construct(UserUpdateRequest $request)
     {
-        parent::__construct($requestCollection->request);
+        parent::__construct($request->request);
 
-        $this->requestCollection = $requestCollection;
+        $this->request = $request;
         $this->rules();
     }
 
@@ -36,12 +36,12 @@ class UserUpdateRequestValidator extends BaseValidator
     public function rules(): void
     {
         $this->validator
-            ->requirePresence($this->requestCollection->id);
+            ->requirePresence($this->request->id);
 
         $this->validator
-            ->requirePresence($this->requestCollection->userName);
+            ->requirePresence($this->request->userName);
 
         $this->validator
-            ->requirePresence($this->requestCollection->password);
+            ->requirePresence($this->request->password);
     }
 }

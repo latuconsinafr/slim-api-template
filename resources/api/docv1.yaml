@@ -1,0 +1,336 @@
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: Slim Clean Architecture Skeleton API
+  contact:
+    name: Farista Latuconsina
+    url: "https://github.com/latuconsinafr"
+    email: faristalatuconsina@gmail.com
+  description: |-
+    This is a sample RESTful Server based on the OpenAPI 3.0 specification for the Slim Clean Architecture Skeleton API. 
+    You can find out more about Swagger at [https://swagger.io](https://swagger.io).
+  license:
+    name: Proprietary License
+    url: "https://en.wikipedia.org/wiki/Proprietary_software"
+externalDocs:
+  description: External Documentation
+  url: "https://example.com/documentation"
+servers:
+  - url: "http://localhost:8000/api/v1"
+    description: Development
+tags:
+  - name: User
+paths:
+  "/users":
+    get:
+      tags:
+        - User
+      summary: List of users
+      description: "Get list of users."
+      operationId: getUsers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        "500":
+          $ref: "#/components/responses/500"
+    post:
+      tags:
+        - User
+      summary: Create user
+      description: "Create a single user."
+      operationId: createUser
+      requestBody:
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+      responses:
+        "201":
+          description: Created
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  "/users/{user_id}":
+    get:
+      tags:
+        - User
+      summary: Get user
+      description: "Get a specified user by user id."
+      operationId: getUserById
+      parameters:
+        - name: user_id
+          in: path
+          description: "The user id that needs to be fetched."
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "4f8100e4-d3d0-48cb-947f-fd8518788328"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+    put:
+      tags:
+        - User
+      summary: Update user
+      description: "Update a specified user data by its user id."
+      operationId: updateUser
+      parameters:
+        - name: user_id
+          in: path
+          description: "The user id that needs to be updated."
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "4f8100e4-d3d0-48cb-947f-fd8518788328"
+      requestBody:
+        description: Update an existent user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "422":
+          $ref: "#/components/responses/422"
+        "409":
+          $ref: "#/components/responses/409"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: "Delete a specified user by its user id."
+      operationId: deleteUser
+      parameters:
+        - name: user_id
+          in: path
+          description: "The user id that needs to be deleted."
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "4f8100e4-d3d0-48cb-947f-fd8518788328"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+components:
+  responses:
+    "200":
+      description: OK.
+      content:
+        application/json: {}
+    "201":
+      description: Created.
+      content:
+        application/json: {}
+    "204":
+      description: Successfully processed.
+      content:
+        application/json: {}
+    "400":
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Your request does not seem to be valid.
+              details:
+                - message: "A more detailed report, if available."
+    "401":
+      description: Authorization information is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Authorization information is missing or invalid.
+    "403":
+      description: Forbidden.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Forbidden. You are not allowed to access this location.
+    "404":
+      description: Not Found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Not Found.
+    "405":
+      description: Method not allowed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Request Method not allowed.
+    "406":
+      description: Not acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: The requested format is not supported.
+    "409":
+      description: Conflict.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: The requested conflict with current state of the target resource.
+    "415":
+      description: Unsupported Media Type.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: The media type is not supported.
+    "422":
+      description: Unprocessable Entity.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Input validation failed
+              details:
+                - field: email
+                  message: Invalid email address.
+    "500":
+      description: Unexpected error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Unexpected internal Server Error.
+              details:
+                - message: "A more detailed report, if available."
+    "503":
+      description: "Service Unavailable, e.g. Maintenance."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              message: Service Unavailable.
+              details:
+                - message: Barakuda is currently under maintenance.
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - user_name
+        - password
+      properties:
+        id:
+          type: uuid
+          example: "4f8100e4-d3d0-48cb-947f-fd8518788328"
+        user_name:
+          type: string
+          example: latuconsinafr
+        email:
+          type: string
+          example: faristalatuconsina@gmail.com
+        phone_number:
+          type: string
+          example: "+6282246882912"
+        password:
+          type: string
+          example: "secret"
+    Users:
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          description: List of users
+          items:
+            $ref: "#/components/schemas/User"
+    UserRequest:
+      type: object
+      required:
+        - user_name
+        - password
+      properties:
+        user_name:
+          type: string
+          example: latuconsinafr
+        email:
+          type: string
+          example: faristalatuconsina@gmail.com
+        phone_number:
+          type: string
+          example: "+6282246920012"
+        password:
+          type: string
+          example: "secret"
+    Error:
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - message
+          properties:
+            message:
+              type: string
+              description: The error message
+            details:
+              type: array
+              items:
+                $ref: "#/components/schemas/ErrorDetails"
+              description: The error details (e.g. validation errors)
+    ErrorDetails:
+      properties:
+        field:
+          type: string
+          description: The name of the invalid field
+        message:
+          type: string
+          description: The error message

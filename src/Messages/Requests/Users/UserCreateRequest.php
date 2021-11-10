@@ -37,7 +37,7 @@ class UserCreateRequest extends BaseRequest
      */
     public function __construct(array $request)
     {
-        parent::__construct($request);
+        $this->request = $request;
     }
 
     /**

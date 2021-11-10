@@ -21,7 +21,7 @@ class UserUpdateRequest extends UserCreateRequest
      */
     public function __construct(array $request)
     {
-        parent::__construct($request);
+        $this->request = $request;
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
 use App\Messages\Responses\Users\UserPagedResponse;
 use App\Repositories\Users\UserRepository;
+use App\Supports\Responder\Responder;
 use App\Validators\Users\UserCreateRequestValidator;
 use App\Validators\Users\UserUpdateRequestValidator;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -20,6 +21,11 @@ use Selective\Validation\Exception\ValidationException;
 final class UserController
 {
     /**
+     * @var Responder The generic responder
+     */
+    private Responder $responder;
+
+    /**
      * @var UserRepository The user repository.
      */
     private UserRepository $userRepository;
@@ -29,8 +35,9 @@ final class UserController
      * 
      * @param UserRepository $userRepository.
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(Responder $responder, UserRepository $userRepository)
     {
+        $this->responder = $responder;
         $this->userRepository = $userRepository;
     }
 
@@ -50,18 +57,10 @@ final class UserController
         $limit = (isset($queryParams['limit']) && $queryParams > 0) ? $queryParams['limit'] : 5;
         $pageNumber = (isset($queryParams['pageNumber']) && $queryParams > 0) ? $queryParams['pageNumber'] : 1;
 
-        $response
-            ->getBody()
-            ->write((string)json_encode(
-                new UserPagedResponse(
-                    $this->userRepository->findAll($limit, $pageNumber),
-                    $limit,
-                    $pageNumber
-                )
-            ));
+        $data = new UserPagedResponse($this->userRepository->findAll($limit, $pageNumber), $limit, $pageNumber);
 
-        return $response
-            ->withHeader('Content-Type', 'application/json')
+        return $this->responder
+            ->withJson($response, $data)
             ->withStatus(200);
     }
 
@@ -76,23 +75,19 @@ final class UserController
      */
     public function getUserById(Request $request, Response $response, array $args): Response
     {
-        $id = $args['id'];
+        $id = $args['user_id'];
         $user = $this->userRepository->findById($id);
 
         if (!$user instanceof User) {
-            return $response
-                ->withHeader('Content-Type', 'application/json')
+            return $this->responder
+                ->withJson($response)
                 ->withStatus(404);
         }
 
-        $response
-            ->getBody()
-            ->write((string)json_encode(
-                new UserDetailResponse($user)
-            ));
+        $data = new UserDetailResponse($user);
 
-        return $response
-            ->withHeader('Content-Type', 'application/json')
+        return $this->responder
+            ->withJson($response, $data)
             ->withStatus(200);
     }
 
@@ -115,8 +110,8 @@ final class UserController
 
         $this->userRepository->add($request->toEntity());
 
-        return $response
-            ->withHeader('Content-Type', 'application/json')
+        return $this->responder
+            ->withJson($response)
             ->withStatus(201);
     }
 
@@ -138,26 +133,26 @@ final class UserController
             throw new ValidationException('Validation failed. Please check your input.', $validationResult);
         }
 
-        $id = $args['id'];
+        $id = $args['user_id'];
 
         if ($request->id != $id) {
-            return $response
-                ->withHeader('Content-Type', 'application/json')
+            return $this->responder
+                ->withJson($response)
                 ->withStatus(409);
         }
 
         $user = $this->userRepository->findById($id);
 
         if (!$user instanceof User) {
-            return $response
-                ->withHeader('Content-Type', 'application/json')
+            return $this->responder
+                ->withJson($response)
                 ->withStatus(404);
         }
 
         $this->userRepository->update($request->toEntity());
 
-        return $response
-            ->withHeader('Content-Type', 'application/json')
+        return $this->responder
+            ->withJson($response)
             ->withStatus(200);
     }
 
@@ -176,15 +171,15 @@ final class UserController
         $user = $this->userRepository->findById($id);
 
         if (!$user instanceof User) {
-            return $response
-                ->withHeader('Content-Type', 'application/json')
+            return $this->responder
+                ->withJson($response)
                 ->withStatus(404);
         }
 
         $this->userRepository->delete($id);
 
-        return $response
-            ->withHeader('Content-Type', 'application/json')
+        return $this->responder
+            ->withJson($response)
             ->withStatus(200);
     }
 }

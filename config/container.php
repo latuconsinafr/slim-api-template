@@ -14,19 +14,25 @@ use Cycle\Schema\Generator\{
     SyncTables,
     ValidateEntities
 };
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\UriFactoryInterface;
 use Selective\Validation\Encoder\JsonEncoder;
 use Selective\Validation\Middleware\ValidationExceptionMiddleware;
 use Selective\Validation\Transformer\ErrorDetailsResultTransformer;
 use Slim\App;
 use Slim\Factory\AppFactory;
+use Slim\Interfaces\RouteParserInterface;
+use Slim\Views\PhpRenderer;
 use Spiral\Database\{DatabaseManager};
 use Spiral\Database\Config\{DatabaseConfig};
 use Spiral\Database\Exception\{ConfigException};
 use Spiral\Tokenizer\ClassLocator;
 use Symfony\Component\Finder\Finder;
-
 
 return [
     // Application settings
@@ -47,6 +53,48 @@ return [
         (require __DIR__ . '/middleware.php')($app);
 
         return $app;
+    },
+
+    // Http message factory definition with container interface injection
+    ResponseFactoryInterface::class => function (ContainerInterface $container) {
+        return $container->get(App::class)->getResponseFactory();
+    },
+    ServerRequestFactoryInterface::class => function (ContainerInterface $container) {
+        return $container->get(Psr17Factory::class);
+    },
+    StreamFactoryInterface::class => function (ContainerInterface $container) {
+        return $container->get(Psr17Factory::class);
+    },
+    UploadedFileFactoryInterface::class => function (ContainerInterface $container) {
+        return $container->get(Psr17Factory::class);
+    },
+    UriFactoryInterface::class => function (ContainerInterface $container) {
+        return $container->get(Psr17Factory::class);
+    },
+
+    // Route parser definition with container interface injection
+    RouteParserInterface::class => function (ContainerInterface $container) {
+        return $container->get(App::class)->getRouteCollector()->getRouteParser();
+    },
+
+    // Php renderer definition with container interface injection
+    PhpRenderer::class => function (ContainerInterface $container) {
+        if (!isset($container->get('settings')['template'])) {
+            throw new ConfigException('Expected template settings');
+        }
+
+        return new PhpRenderer($container->get('settings')['template']);
+    },
+
+    // Validation exception middleware definition with container interface injection
+    ValidationExceptionMiddleware::class => function (ContainerInterface $container) {
+        $factory = $container->get(ResponseFactoryInterface::class);
+
+        return new ValidationExceptionMiddleware(
+            $factory,
+            new ErrorDetailsResultTransformer(),
+            new JsonEncoder()
+        );
     },
 
     // ORM definition with container interface injection
@@ -86,25 +134,6 @@ return [
 
         return $orm;
     },
-
-    // Validation exception middleware definition with container interface injection
-    ValidationExceptionMiddleware::class => function (ContainerInterface $container) {
-        $factory = $container->get(ResponseFactoryInterface::class);
-
-        return new ValidationExceptionMiddleware(
-            $factory,
-            new ErrorDetailsResultTransformer(),
-            new JsonEncoder()
-        );
-    },
-
-    // Response factory definition with container interface injection
-    ResponseFactoryInterface::class => function (ContainerInterface $container) {
-        $app = $container->get(App::class);
-
-        return $app->getResponseFactory();
-    },
-
 
     // Repositories definition with user repository injection
     UserRepositoryInterface::class => DI\create(UserRepository::class)

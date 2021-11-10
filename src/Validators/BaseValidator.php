@@ -24,7 +24,7 @@ class BaseValidator
     /**
      * @var array The request to validate.
      */
-    protected array $request;
+    private array $request;
 
     /**
      * The constructor.
