@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Supports\Responder\Responder;
+use App\Supports\Responders\Responder;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Symfony\Component\Yaml\Yaml;
@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Doc v1 Controller.
  */
-final class Docv1Controller
+final class DocV1Controller
 {
     /**
      * @var Responder The generic responder
@@ -36,10 +36,10 @@ final class Docv1Controller
      */
     public function index(Request $request, Response $response, array $args): Response
     {
-        $docv1 = __DIR__ . '/../../resources/api/docv1.yaml';
+        $docV1 = __DIR__ . '/../../resources/api/docV1.yaml';
 
         $viewData = [
-            'spec' => json_encode(Yaml::parseFile($docv1)),
+            'spec' => json_encode(Yaml::parseFile($docV1)),
         ];
 
         return $this->responder->withTemplate($response, 'doc/swagger.php', $viewData);

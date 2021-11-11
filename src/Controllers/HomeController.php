@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Supports\Responder\Responder;
+use App\Supports\Responders\Responder;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -35,6 +35,6 @@ final class HomeController
      */
     public function index(Request $request, Response $response, array $args): Response
     {
-        return $response;
+        return $this->responder->withRedirectFor($response, 'docs');
     }
 }

@@ -2,6 +2,8 @@
 
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Users\UserRepositoryInterface;
+use App\Supports\Handlers\ErrorHandler;
+use App\Supports\Loggers\Logger;
 use Cycle\Annotated\{Embeddings, Entities, MergeColumns, MergeIndexes};
 use Cycle\ORM\{Factory, ORM, Schema as OrmSchema};
 use Cycle\Schema\{Compiler, Registry};
@@ -27,6 +29,7 @@ use Selective\Validation\Transformer\ErrorDetailsResultTransformer;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Interfaces\RouteParserInterface;
+use Slim\Middleware\ErrorMiddleware;
 use Slim\Views\PhpRenderer;
 use Spiral\Database\{DatabaseManager};
 use Spiral\Database\Config\{DatabaseConfig};
@@ -72,6 +75,11 @@ return [
         return $container->get(Psr17Factory::class);
     },
 
+    // The logger definition with container interface injection
+    Logger::class => function (ContainerInterface $container) {
+        return new Logger($container->get('settings')['logger']);
+    },
+
     // Route parser definition with container interface injection
     RouteParserInterface::class => function (ContainerInterface $container) {
         return $container->get(App::class)->getRouteCollector()->getRouteParser();
@@ -95,6 +103,29 @@ return [
             new ErrorDetailsResultTransformer(),
             new JsonEncoder()
         );
+    },
+
+    // Error middleware definition with container interface injection
+    ErrorMiddleware::class => function (ContainerInterface $container) {
+        $settings = $container->get('settings')['error'];
+        $app = $container->get(App::class);
+
+        $logger = $container->get(Logger::class)
+            ->addFileHandler('error.log')
+            ->createLogger();
+
+        $errorMiddleware = new ErrorMiddleware(
+            $app->getCallableResolver(),
+            $app->getResponseFactory(),
+            (bool)$settings['display_error_details'],
+            (bool)$settings['log_errors'],
+            (bool)$settings['log_error_details'],
+            $logger
+        );
+
+        $errorMiddleware->setDefaultErrorHandler($container->get(ErrorHandler::class));
+
+        return $errorMiddleware;
     },
 
     // ORM definition with container interface injection

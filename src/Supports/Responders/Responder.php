@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Supports\Responder;
+namespace App\Supports\Responders;
 
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -9,7 +9,7 @@ use Slim\Views\PhpRenderer;
 use function http_build_query;
 
 /**
- * A generic responder.
+ * Responder.
  */
 final class Responder
 {
@@ -133,7 +133,9 @@ final class Responder
         int $options = 0
     ): ResponseInterface {
         $response = $response->withHeader('Content-Type', 'application/json');
-        $response->getBody()->write((string)json_encode($data, $options));
+
+        if (!is_null($data))
+            $response->getBody()->write((string)json_encode($data, $options));
 
         return $response;
     }

@@ -8,7 +8,7 @@ use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
 use App\Messages\Responses\Users\UserPagedResponse;
 use App\Repositories\Users\UserRepository;
-use App\Supports\Responder\Responder;
+use App\Supports\Responders\Responder;
 use App\Validators\Users\UserCreateRequestValidator;
 use App\Validators\Users\UserUpdateRequestValidator;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -75,7 +75,7 @@ final class UserController
      */
     public function getUserById(Request $request, Response $response, array $args): Response
     {
-        $id = $args['user_id'];
+        $id = $args['id'];
         $user = $this->userRepository->findById($id);
 
         if (!$user instanceof User) {
@@ -133,7 +133,7 @@ final class UserController
             throw new ValidationException('Validation failed. Please check your input.', $validationResult);
         }
 
-        $id = $args['user_id'];
+        $id = $args['id'];
 
         if ($request->id != $id) {
             return $this->responder

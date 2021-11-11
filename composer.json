@@ -4,6 +4,7 @@
         "cycle/annotated": "^2.4",
         "cycle/orm": "^1.7",
         "cycle/schema-builder": "^1.2",
+        "monolog/monolog": "^2.3",
         "php-di/php-di": "^6.3",
         "ramsey/uuid": "^4.2",
         "selective/validation": "^2.0",

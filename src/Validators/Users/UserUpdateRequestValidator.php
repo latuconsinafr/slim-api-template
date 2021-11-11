@@ -39,9 +39,15 @@ class UserUpdateRequestValidator extends BaseValidator
             ->requirePresence($this->request->id);
 
         $this->validator
-            ->requirePresence($this->request->userName);
+            ->requirePresence($this->request->userName)
+            ->lengthBetween($this->request->userName, [4, 16])
+            ->alphaNumeric($this->request->userName);
 
         $this->validator
-            ->requirePresence($this->request->password);
+            ->email($this->request->email);
+
+        $this->validator
+            ->requirePresence($this->request->password)
+            ->lengthBetween($this->request->password, [4, 16]);
     }
 }

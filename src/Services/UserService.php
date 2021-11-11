@@ -3,10 +3,8 @@
 namespace App\Services;
 
 use App\Data\Entities\User;
-use App\Messages\Requests\UserCreateRequest;
 use App\Messages\Requests\Users\UserCreateRequest as UsersUserCreateRequest;
 use App\Messages\Requests\Users\UserUpdateRequest as UsersUserUpdateRequest;
-use App\Messages\Requests\UserUpdateRequest;
 use App\Repositories\Users\UserRepositoryInterface;
 
 /**
