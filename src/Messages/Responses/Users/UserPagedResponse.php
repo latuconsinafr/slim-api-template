@@ -2,8 +2,8 @@
 
 namespace App\Messages\Responses\Users;
 
+use App\Data\Views\PagedView;
 use App\Messages\Responses\PagedResponse;
-use ArrayIterator;
 
 /**
  * Responder for users data with pagination.
@@ -21,19 +21,16 @@ class UserPagedResponse
     public iterable $results;
 
     /**
-     * The constructor.
+     * The constructor
      * 
-     * @param iterable $result The iterable of @see User.
-     * @param int $limit The page limit.
-     * @param int $pageNumber The current page number.
+     * @param PagedView $pagedView The paged view
      */
-    public function __construct(iterable $result, int $limit, int $pageNumber)
+    public function __construct(PagedView $pagedView)
     {
-        $count = iterator_count(new ArrayIterator($result));
-        $this->pageInfo = new PagedResponse($limit, $pageNumber, $count);
+        $this->pageInfo = new PagedResponse($pagedView);
 
-        if ($count > 0) {
-            foreach ($result as $user) {
+        if ($pagedView->count > 0) {
+            foreach ($pagedView->results as $user) {
                 $this->results[] = new UserDetailResponse($user);
             }
         } else {

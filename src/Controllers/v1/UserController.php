@@ -7,7 +7,7 @@ use App\Messages\Requests\Users\UserCreateRequest;
 use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
 use App\Messages\Responses\Users\UserPagedResponse;
-use App\Repositories\Users\UserRepository;
+use App\Repositories\Users\UserRepositoryInterface;
 use App\Supports\Responders\Responder;
 use App\Validators\Users\UserCreateRequestValidator;
 use App\Validators\Users\UserUpdateRequestValidator;
@@ -28,14 +28,14 @@ final class UserController
     /**
      * @var UserRepository The user repository.
      */
-    private UserRepository $userRepository;
+    private UserRepositoryInterface $userRepository;
 
     /**
      * The constructor.
      * 
      * @param UserRepository $userRepository.
      */
-    public function __construct(Responder $responder, UserRepository $userRepository)
+    public function __construct(Responder $responder, UserRepositoryInterface $userRepository)
     {
         $this->responder = $responder;
         $this->userRepository = $userRepository;
@@ -53,11 +53,7 @@ final class UserController
     public function getUsers(Request $request, Response $response): Response
     {
         $queryParams = $request->getQueryParams();
-
-        $limit = (isset($queryParams['limit']) && $queryParams > 0) ? $queryParams['limit'] : 5;
-        $pageNumber = (isset($queryParams['pageNumber']) && $queryParams > 0) ? $queryParams['pageNumber'] : 1;
-
-        $data = new UserPagedResponse($this->userRepository->findAll($limit, $pageNumber), $limit, $pageNumber);
+        $data = new UserPagedResponse($this->userRepository->search($queryParams));
 
         return $this->responder
             ->withJson($response, $data)

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Users;
 
 use App\Data\Entities\User;
-use Cycle\ORM\ORM;
-use Cycle\ORM\RepositoryInterface;
-use Cycle\ORM\Transaction;
+use App\Data\Views\PagedView;
+use Cycle\ORM\{ORM, Transaction};
+use Cycle\ORM\Select\Repository;
 use Spiral\Pagination\Paginator;
 use Spiral\Database\Exception\StatementException\{ConnectionException, ConstrainException};
 
@@ -20,9 +22,19 @@ class UserRepository implements UserRepositoryInterface
     private Transaction $transaction;
 
     /**
-     * @var RepositoryInterface The cycle orm repository interface.
+     * @var Repository The cycle orm repository interface.
      */
-    private RepositoryInterface $repository;
+    private Repository $repository;
+
+    /**
+     * @var array The search able fields
+     */
+    private array $searchFields = ['user_name', 'email', 'phone_number'];
+
+    /**
+     * @var array The sort able fields
+     */
+    private array $sortFields = ['id', 'user_name', 'email', 'phone_number'];
 
     /**
      * The constructor.
@@ -36,19 +48,59 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /** 
-     * {@inheritdoc} 
+     * @inheritdoc
      */
-    public function findAll(?int $limit = null, ?int $pageNumber = null): iterable
+    public function findAll(): iterable
     {
-        if (!is_int($limit) || !is_int($pageNumber)) {
-            return $this->repository->findAll();
+        return $this->repository->findAll();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function search(array $query): PagedView
+    {
+        $select = $this->repository->select();
+
+        // Search
+        if (isset($query['search']) && strlen($query['search']) > 0) {
+            $search = $query['search'];
+
+            foreach ($this->searchFields as $value) {
+                $select->orWhere($value, 'like', $search);
+            }
         }
 
-        $select = $this->repository->select();
-        $paginator = new Paginator($limit);
-        $paginator->withPage($pageNumber)->paginate($select)->countPages();
+        // Order
+        if (isset($query['orderBy']) && strlen($query['orderBy']) > 0) {
+            $orderBy = explode(":", $query['orderBy']);
 
-        return $select->fetchAll();
+            if (isset($orderBy[0]) && isset($orderBy[1])) {
+                $attribute = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $orderBy[0]));
+                $sortMethod = strtoupper($orderBy[1]);
+
+                if (in_array($attribute, $this->sortFields) && ($sortMethod == 'ASC' || $sortMethod == 'DESC')) {
+                    $select->orderBy($orderBy[0], strtoupper($orderBy[1]));
+                }
+            }
+        }
+
+        // Pagination
+        $limit = 5;
+        $pageNumber = 1;
+
+        if (isset($query['limit']) && $query['limit'] > 0) {
+            $limit = (int)$query['limit'];
+        }
+        if (isset($query['pageNumber']) && $query['pageNumber'] >= 0) {
+            $pageNumber = (int)$query['pageNumber'];
+        }
+
+        $count = $select->count();
+
+        (new Paginator($limit))->withPage($pageNumber)->paginate($select);
+
+        return new PagedView($pageNumber, $limit, $count, $select->fetchAll());
     }
 
     /**
@@ -87,7 +139,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /** 
-     * {@inheritdoc} 
+     * @inheritdoc
      */
     public function delete(string $id): void
     {

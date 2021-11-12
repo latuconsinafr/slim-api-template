@@ -3,6 +3,7 @@
 namespace App\Repositories\Users;
 
 use App\Data\Entities\User;
+use App\Data\Views\PagedView;
 
 /**
  * The user repository interface.
@@ -12,12 +13,16 @@ interface UserRepositoryInterface
     /**
      * The get all users with pagination repository.
      * 
-     * @param int|null $limit The page limit for pagination.
-     * @param int|null $pageNumber The current page number for pagination.
-     * 
      * @return iterable The iterable of @see User.
      */
-    public function findAll(?int $limit = null, ?int $pageNumber = null): iterable;
+    public function findAll(): iterable;
+
+    /**
+     * @param array $query The query parameters
+     * 
+     * @return PagedView
+     */
+    public function search(array $query): PagedView;
 
     /**
      * The get specified user by id repository.
