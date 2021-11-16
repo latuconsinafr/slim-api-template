@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Validators\Users;
 
 use App\Messages\Requests\Users\UserUpdateRequest;

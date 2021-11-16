@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Messages\Requests\Users;
 
-use App\Data\Entities\User;
+use App\Data\Entities\UserEntity;
 
 /**
  * Define the request key for user update request.
@@ -27,11 +29,11 @@ class UserUpdateRequest extends UserCreateRequest
     /**
      * Transform incoming request into associated entity.
      * 
-     * @return User The user entity.
+     * @return UserEntity The user entity.
      */
-    public function toEntity(): User
+    public function toEntity(): UserEntity
     {
-        return new User(
+        return new UserEntity(
             $this->request[$this->userName],
             $this->request[$this->email],
             $this->request[$this->phoneNumber],

@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers\v1;
 
-use App\Data\Entities\User;
+use App\Data\Entities\UserEntity;
+use App\Domain\User\User;
 use App\Messages\Requests\Users\UserCreateRequest;
 use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
 use App\Messages\Responses\Users\UserPagedResponse;
-use App\Repositories\Users\UserRepositoryInterface;
+use App\Services\UserService;
 use App\Supports\Responders\Responder;
 use App\Validators\Users\UserCreateRequestValidator;
 use App\Validators\Users\UserUpdateRequestValidator;
@@ -21,24 +24,25 @@ use Selective\Validation\Exception\ValidationException;
 final class UserController
 {
     /**
-     * @var Responder The generic responder
+     * @var Responder The generic responder.
      */
     private Responder $responder;
 
     /**
-     * @var UserRepository The user repository.
+     * @var UserService The user repository.
      */
-    private UserRepositoryInterface $userRepository;
+    private UserService $userService;
 
     /**
      * The constructor.
      * 
-     * @param UserRepository $userRepository.
+     * @param Responder $responder The generic responder.
+     * @param UserService $userService The user service.
      */
-    public function __construct(Responder $responder, UserRepositoryInterface $userRepository)
+    public function __construct(Responder $responder, UserService $userService)
     {
         $this->responder = $responder;
-        $this->userRepository = $userRepository;
+        $this->userService = $userService;
     }
 
     /**
@@ -52,8 +56,11 @@ final class UserController
      */
     public function getUsers(Request $request, Response $response): Response
     {
-        $queryParams = $request->getQueryParams();
-        $data = new UserPagedResponse($this->userRepository->search($queryParams));
+        $queryParams = (array)$request->getQueryParams();
+        $limit = isset($queryParams['limit']) && $queryParams['limit'] > 0 ? (int)$queryParams['limit'] : 5;
+        $pageNumber = isset($queryParams['pageNumber']) && $queryParams['pageNumber'] > 0 ? (int)$queryParams['pageNumber'] : 1;
+
+        $data = new UserPagedResponse($this->userService->findAllWithQuery($limit, $pageNumber));
 
         return $this->responder
             ->withJson($response, $data)
@@ -72,9 +79,10 @@ final class UserController
     public function getUserById(Request $request, Response $response, array $args): Response
     {
         $id = $args['id'];
-        $user = $this->userRepository->findById($id);
 
-        if (!$user instanceof User) {
+        $user = $this->userService->findById($id);
+
+        if (!$user instanceof UserEntity) {
             return $this->responder
                 ->withJson($response)
                 ->withStatus(404);
@@ -97,14 +105,14 @@ final class UserController
      */
     public function createUser(Request $request, Response $response): Response
     {
-        $request = new UserCreateRequest($request->getParsedBody());
+        $request = new UserCreateRequest((array)$request->getParsedBody());
         $validationResult = (new UserCreateRequestValidator($request))->validate();
 
         if ($validationResult->fails()) {
             throw new ValidationException('Validation failed. Please check your input.', $validationResult);
         }
 
-        $this->userRepository->add($request->toEntity());
+        $this->userService->create($request->toEntity());
 
         return $this->responder
             ->withJson($response)
@@ -131,21 +139,21 @@ final class UserController
 
         $id = $args['id'];
 
-        if ($request->id != $id) {
+        if ($request->request[$request->id] != $id) {
             return $this->responder
                 ->withJson($response)
                 ->withStatus(409);
         }
 
-        $user = $this->userRepository->findById($id);
+        $user = $this->userService->findById($id);
 
-        if (!$user instanceof User) {
+        if (!$user instanceof UserEntity) {
             return $this->responder
                 ->withJson($response)
                 ->withStatus(404);
         }
 
-        $this->userRepository->update($request->toEntity());
+        $this->userService->update($request->toEntity());
 
         return $this->responder
             ->withJson($response)
@@ -164,15 +172,15 @@ final class UserController
     public function deleteUser(Request $request, Response $response, array $args): Response
     {
         $id = $args['id'];
-        $user = $this->userRepository->findById($id);
+        $user = $this->userService->findById($id);
 
-        if (!$user instanceof User) {
+        if (!$user instanceof UserEntity) {
             return $this->responder
                 ->withJson($response)
                 ->withStatus(404);
         }
 
-        $this->userRepository->delete($id);
+        $this->userService->delete($id);
 
         return $this->responder
             ->withJson($response)

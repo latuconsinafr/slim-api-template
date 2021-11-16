@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Messages\Requests\Users;
 
-use App\Data\Entities\User;
+use App\Data\Entities\UserEntity;
 use App\Messages\Requests\BaseRequest;
 
 /**
@@ -43,11 +45,11 @@ class UserCreateRequest extends BaseRequest
     /**
      * Transform incoming request into associated entity.
      * 
-     * @return User The user entity.
+     * @return UserEntity The User entity.
      */
-    public function toEntity(): User
+    public function toEntity(): UserEntity
     {
-        return new User(
+        return new UserEntity(
             $this->request[$this->userName],
             $this->request[$this->email],
             $this->request[$this->phoneNumber],

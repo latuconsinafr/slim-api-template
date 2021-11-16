@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Repositories\BaseRepository;
+use App\Repositories\BaseRepositoryInterface;
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Users\UserRepositoryInterface;
 use App\Supports\Handlers\ErrorHandler;

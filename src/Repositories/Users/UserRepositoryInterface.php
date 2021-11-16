@@ -1,62 +1,57 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Users;
 
-use App\Data\Entities\User;
-use App\Data\Views\PagedView;
+use App\Data\Entities\UserEntity;
+use App\Repositories\BaseRepositoryInterface;
 
 /**
  * The user repository interface.
  */
-interface UserRepositoryInterface
+interface UserRepositoryInterface extends BaseRepositoryInterface
 {
     /**
      * The get all users with pagination repository.
      * 
-     * @return iterable The iterable of @see User.
+     * @return iterable The iterable of @see UserEntity, if any.
      */
     public function findAll(): iterable;
 
     /**
-     * @param array $query The query parameters
-     * 
-     * @return PagedView
-     */
-    public function search(array $query): PagedView;
-
-    /**
      * The get specified user by id repository.
      * 
-     * @param string $id The specified user's id.
+     * @param string $id The specified user's id to find.
      * 
-     * @return User The specified user.
+     * @return UserEntity|null The user entity, if any.
      */
-    public function findById(string $id): ?User;
+    public function findById(string $id): ?UserEntity;
 
     /**
      * The create user repository.
      * 
-     * @param User $user The user entity to be created.
+     * @param UserEntity $user The user entity to create.
      * 
      * @return void
      */
-    public function add(User $user): void;
+    public function create(UserEntity $user): void;
 
     /**
      * The update user repository.
      * 
-     * @param User $user The user entity to be updated.
+     * @param UserEntity $user The user entity to update.
      * 
      * @return void
      */
-    public function update(User $user): void;
+    public function update(UserEntity $user): void;
 
     /**
-     * The delete specified user by id repository.
+     * The delete user repository.
      * 
-     * @param string $id The specified user's id.
+     * @param UserEntity $user The user to delete.
      * 
      * @return void
      */
-    public function delete(string $id): void;
+    public function delete(UserEntity $user): void;
 }

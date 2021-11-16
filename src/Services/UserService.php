@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
-use App\Data\Entities\User;
-use App\Messages\Requests\Users\UserCreateRequest as UsersUserCreateRequest;
-use App\Messages\Requests\Users\UserUpdateRequest as UsersUserUpdateRequest;
+use App\Data\Entities\UserEntity;
+use App\Data\Paged;
 use App\Repositories\Users\UserRepositoryInterface;
+use InvalidArgumentException;
 
 /**
  * The user service.
@@ -28,63 +30,117 @@ class UserService
     }
 
     /**
-     * The get all users service.
+     * The find all service.
      * 
-     * @param int|null $limit The page limit for pagination.
-     * @param int|null $pageNumber The current page number for pagination.
-     * 
-     * @return iterable The iterable of @see User.
+     * @return iterable The iterable of @see UserEntity.
      */
-    public function getUsers(?int $limit = null, ?int $pageNumber = null): iterable
+    public function findAll(): iterable
     {
-        return $this->userRepository->findAll($limit, $pageNumber);
+        // Algorithm
+        return $this->userRepository->findAll();
     }
 
     /**
-     * The get specified user by id service.
+     * The find all with query parameters service.
      * 
-     * @param string $id The specified user's id.
+     * @param int $limit The page limit.
+     * @param int $pageNumber The current page number.
+     * @param string $orderByKey The order by key.
+     * @param string $orderByMethod The order by method.
+     * @param string $search The value to search.
      * 
-     * @return User The specified user.
+     * @return Paged The iterable of @see UserEntity which contains a specified search value with @see Paged object, if any.
      */
-    public function getUserById(string $id): ?User
+    public function findAllWithQuery(int $limit = 5, int $pageNumber = 1, string $orderByKey = 'id', string $orderByMethod = 'asc', string $search = ''): Paged
     {
+        // Algorithm
+        $results = $this->userRepository
+            ->search($search)
+            ->orderBy($orderByKey, $orderByMethod)
+            ->paginate($limit, $pageNumber)
+            ->fetchAll();
+        $count = $this->userRepository->count();
+
+        return new Paged($limit, $pageNumber, $count, $results);
+    }
+
+    /**
+     * The find by id service.
+     * 
+     * @param string $id The specified user's id to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
+    public function findById(string $id): ?UserEntity
+    {
+        // Algorithm
+        if (!is_string($id)) {
+            throw new InvalidArgumentException("The type of given id is not a string. Input was: {$id}");
+        }
+        if (is_null($id)) {
+            throw new InvalidArgumentException("The given id value is null");
+        }
+
         return $this->userRepository->findById($id);
     }
 
     /**
      * The create user service.
      * 
-     * @param UserCreateRequest $request The create request.
+     * @param UserEntity $user The user entity to create.
      * 
      * @return void
      */
-    public function createUser(UsersUserCreateRequest $request): void
+    public function create(UserEntity $user): void
     {
-        $this->userRepository->add($request->toEntity());
+        // Algorithm
+        if (!$user instanceof UserEntity) {
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+        }
+
+        $this->userRepository->create($user);
     }
 
     /**
-     * The update specified user by id service.
+     * The update user service.
      * 
-     * @param UserUpdateRequest $request The update request.
+     * @param UserEntity $user The user entity to update.
      * 
      * @return void
      */
-    public function updateUser(UsersUserUpdateRequest $request): void
+    public function update(UserEntity $user): void
     {
-        $this->userRepository->update($request->toEntity());
+        // Algorithm
+        if (!$user instanceof UserEntity) {
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+        }
+
+        $this->userRepository->update($user);
     }
 
     /**
-     * The delete specified user by id service.
+     * The delete user service.
      * 
-     * @param string $id The specified user's id.
+     * @param string $id The specified user's id to delete.
      * 
      * @return void
      */
-    public function deleteUser(string $id): void
+    public function delete(string $id): void
     {
-        $this->userRepository->delete($id);
+        // Algorithm
+        if (!is_string($id)) {
+            throw new InvalidArgumentException("The type of given id is not a string. Input was: {$id}");
+        }
+        if (is_null($id)) {
+            throw new InvalidArgumentException("The given id value is null");
+        }
+
+        $user = $this->findById($id);
+
+        if (!$user instanceof UserEntity) {
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+        }
+
+        $this->userRepository->delete($user);
     }
 }

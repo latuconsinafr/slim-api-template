@@ -1,62 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Messages\Responses;
 
-use App\Data\Views\PagedView;
+use App\Data\Paged;
 
 /**
- * Responder for pagination.
+ * The paged response.
  */
 class PagedResponse
 {
     /**
-     * @var int The current page number
-     */
-    public int $pageNumber;
-
-    /**
-     * @var int The page limit
+     * @var int The page limit.
      */
     public int $limit;
 
     /**
-     * @var int The total data in current page
+     * @var int The current page number.
+     */
+    public int $pageNumber;
+
+    /**
+     * @var int The total data in current page.
      */
     public int $count;
 
     /**
-     * @var int The total data
+     * @var int The total data.
      */
     public int $totalCount;
 
     /**
-     * @var int The total pages
+     * @var int The total pages.
      */
     public int $totalPages;
 
     /**
-     * @var bool The flag indicates whether has previous page or not
+     * @var bool The flag indicates whether has previous page or not.
      */
     public bool $hasPreviousPage;
 
     /**
-     * @var bool The flag indicates whether has next page or not
+     * @var bool The flag indicates whether has next page or not.
      */
     public bool $hasNextPage;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param PagedView $pagedView The paged view
+     * @param Paged $paged The paged data.
      */
-    public function __construct(PagedView $pagedView)
+    public function __construct(Paged $paged)
     {
-        $this->pageNumber = $pagedView->pageNumber;
-        $this->limit = $pagedView->limit;
-        $this->count = $pagedView->count;
-        $this->totalCount = $pagedView->totalCount;
-        $this->totalPages = $pagedView->totalPages;
-        $this->hasPreviousPage = $pagedView->hasPreviousPage;
-        $this->hasNextPage = $pagedView->hasNextPage;
+        $this->pageNumber = $paged->pageNumber;
+        $this->limit = $paged->limit;
+        $this->count = $paged->count;
+        $this->totalCount = $paged->totalCount;
+        $this->totalPages = $paged->totalPages;
+        $this->hasPreviousPage = $paged->hasPreviousPage;
+        $this->hasNextPage = $paged->hasNextPage;
     }
 }

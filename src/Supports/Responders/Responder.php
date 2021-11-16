@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Supports\Responders;
 
 use Psr\Http\Message\ResponseFactoryInterface;

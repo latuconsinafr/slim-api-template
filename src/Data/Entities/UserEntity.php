@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Data\Entities;
 
 use Cycle\Annotated\Annotation\Entity;
@@ -7,11 +9,10 @@ use Cycle\Annotated\Annotation\Column;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @Entity
+ * @Entity(table="users")
  */
-class User
+class UserEntity
 {
-
     /**
      * @Column(type="string(36)", primary=true)
      * @var string
@@ -57,7 +58,7 @@ class User
         $this->email = $email;
         $this->phoneNumber = $phoneNumber;
         $this->password = $password;
-        $this->id = $id ? $id : UUID::uuid4();
+        $this->id = $id ? $id : UUID::uuid4()->toString();
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Controllers\DocV1Controller;
 use App\Controllers\HomeController;
 use App\Controllers\v1\UserController;

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Messages\Responses\Users;
 
-use App\Data\Views\PagedView;
+use App\Data\Paged;
 use App\Messages\Responses\PagedResponse;
 
 /**
- * Responder for users data with pagination.
+ * The user response with pagination.
  */
 class UserPagedResponse
 {
@@ -21,16 +23,16 @@ class UserPagedResponse
     public iterable $results;
 
     /**
-     * The constructor
+     * The constructor.
      * 
-     * @param PagedView $pagedView The paged view
+     * @param Paged $paged The paged data.
      */
-    public function __construct(PagedView $pagedView)
+    public function __construct(Paged $paged)
     {
-        $this->pageInfo = new PagedResponse($pagedView);
+        $this->pageInfo = new PagedResponse($paged);
 
-        if ($pagedView->count > 0) {
-            foreach ($pagedView->results as $user) {
+        if ($paged->count > 0) {
+            foreach ($paged->results as $user) {
                 $this->results[] = new UserDetailResponse($user);
             }
         } else {

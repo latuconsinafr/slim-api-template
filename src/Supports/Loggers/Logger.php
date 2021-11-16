@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Supports\Loggers;
 
 use Monolog\Formatter\LineFormatter;
@@ -64,7 +66,7 @@ final class Logger
             return $this->testLogger;
         }
 
-        $logger = new MonologLogger($name ?: UUID::uuid4());
+        $logger = new MonologLogger($name ?: UUID::uuid4()->toString());
 
         foreach ($this->handler as $handler) {
             $logger->pushHandler($handler);

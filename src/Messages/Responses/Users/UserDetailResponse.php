@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Messages\Responses\Users;
 
-use App\Data\Entities\User;
+use App\Data\Entities\UserEntity;
 
 /**
  * Responder for single user data.
@@ -34,9 +36,9 @@ class UserDetailResponse
      * 
      * @param User|null $user The user entity.
      */
-    public function __construct(?User $user)
+    public function __construct(?UserEntity $user)
     {
-        if ($user instanceof User) {
+        if ($user instanceof UserEntity) {
             $this->id = $user->getId();
             $this->userName = $user->getUserName();
             $this->email = $user->getEmail();

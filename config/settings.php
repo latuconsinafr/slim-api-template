@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // Configure defaults for the whole application.
 
 // Error reporting

@@ -4,47 +4,27 @@ declare(strict_types=1);
 
 namespace App\Repositories\Users;
 
-use App\Data\Entities\User;
-use App\Data\Views\PagedView;
-use Cycle\ORM\{ORM, Transaction};
-use Cycle\ORM\Select\Repository;
-use Spiral\Pagination\Paginator;
-use Spiral\Database\Exception\StatementException\{ConnectionException, ConstrainException};
+use App\Data\Entities\UserEntity;
+use App\Repositories\BaseRepository;
+use Cycle\ORM\ORM;
+use Cycle\ORM\Transaction;
+use InvalidArgumentException;
 
 /**
  * The user repository.
  */
-class UserRepository implements UserRepositoryInterface
+class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     /**
-     * @var Transaction The cycle orm transaction.
-     */
-    private Transaction $transaction;
-
-    /**
-     * @var Repository The cycle orm repository interface.
-     */
-    private Repository $repository;
-
-    /**
-     * @var array The search able fields
-     */
-    private array $searchFields = ['user_name', 'email', 'phone_number'];
-
-    /**
-     * @var array The sort able fields
-     */
-    private array $sortFields = ['id', 'user_name', 'email', 'phone_number'];
-
-    /**
      * The constructor.
-     * 
-     * @param ORM $orm.
      */
     public function __construct(ORM $orm)
     {
-        $this->transaction = new Transaction($orm);
-        $this->repository = $orm->getRepository(User::class);
+        $this->orm = $orm;
+        $this->transaction = new Transaction($this->orm);
+        $this->repository = $orm->getRepository(UserEntity::class);
+
+        $this->fields = ['user_name', 'email', 'phone_number'];
     }
 
     /** 
@@ -52,70 +32,36 @@ class UserRepository implements UserRepositoryInterface
      */
     public function findAll(): iterable
     {
+        // Algorithm
         return $this->repository->findAll();
     }
 
     /**
      * @inheritdoc
      */
-    public function search(array $query): PagedView
+    public function findById(string $id): ?UserEntity
     {
-        $select = $this->repository->select();
-
-        // Search
-        if (isset($query['search']) && strlen($query['search']) > 0) {
-            $search = $query['search'];
-
-            foreach ($this->searchFields as $value) {
-                $select->orWhere($value, 'like', $search);
-            }
+        // Algorithm
+        if (!is_string($id)) {
+            throw new InvalidArgumentException("The type of given id is not a string. Input was: {$id}");
+        }
+        if (is_null($id)) {
+            throw new InvalidArgumentException("The given id value is null");
         }
 
-        // Order
-        if (isset($query['orderBy']) && strlen($query['orderBy']) > 0) {
-            $orderBy = explode(":", $query['orderBy']);
-
-            if (isset($orderBy[0]) && isset($orderBy[1])) {
-                $attribute = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $orderBy[0]));
-                $sortMethod = strtoupper($orderBy[1]);
-
-                if (in_array($attribute, $this->sortFields) && ($sortMethod == 'ASC' || $sortMethod == 'DESC')) {
-                    $select->orderBy($orderBy[0], strtoupper($orderBy[1]));
-                }
-            }
-        }
-
-        // Pagination
-        $limit = 5;
-        $pageNumber = 1;
-
-        if (isset($query['limit']) && $query['limit'] > 0) {
-            $limit = (int)$query['limit'];
-        }
-        if (isset($query['pageNumber']) && $query['pageNumber'] >= 0) {
-            $pageNumber = (int)$query['pageNumber'];
-        }
-
-        $count = $select->count();
-
-        (new Paginator($limit))->withPage($pageNumber)->paginate($select);
-
-        return new PagedView($pageNumber, $limit, $count, $select->fetchAll());
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function findById(string $id): ?User
-    {
         return $this->repository->findByPK($id);
     }
 
     /**
      * @inheritdoc
      */
-    public function add(User $user): void
+    public function create(UserEntity $user): void
     {
+        // Algorithm
+        if (!$user instanceof UserEntity) {
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+        }
+
         $this->transaction->persist($user);
         $this->run();
     }
@@ -123,47 +69,39 @@ class UserRepository implements UserRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function update(User $user): void
+    public function update(UserEntity $user): void
     {
-        $userToBeUpdated = $this->repository->findByPK($user->getId());
-
-        if ($userToBeUpdated instanceof User) {
-            $userToBeUpdated->setUserName($user->getUserName());
-            $userToBeUpdated->setEmail($user->getEmail());
-            $userToBeUpdated->setPhoneNumber($user->getPhoneNumber());
-            $userToBeUpdated->setPassword($user->getPassword());
-
-            $this->transaction->persist($userToBeUpdated);
-            $this->run();
+        // Algorithm
+        if (!$user instanceof UserEntity) {
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
         }
+
+        $userToUpdate = $this->findById($user->getId());
+
+        if (!$userToUpdate instanceof UserEntity) {
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+        }
+
+        $userToUpdate->setUserName($user->getUserName());
+        $userToUpdate->setEmail($user->getEmail());
+        $userToUpdate->setPhoneNumber($user->getPhoneNumber());
+        $userToUpdate->setPassword($user->getPassword());
+
+        $this->transaction->persist($userToUpdate);
+        $this->run();
     }
 
     /** 
      * @inheritdoc
      */
-    public function delete(string $id): void
+    public function delete(UserEntity $user): void
     {
-        $userToBeDeleted = $this->repository->findByPK($id);
-
-        if ($userToBeDeleted instanceof User) {
-            $this->transaction->delete($userToBeDeleted);
-            $this->run();
+        // Algorithm
+        if (!$user instanceof UserEntity) {
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
         }
-    }
 
-    /**
-     * The transaction runner function
-     * 
-     * @return void
-     */
-    private function run(): void
-    {
-        try {
-            $this->transaction->run();
-        } catch (ConnectionException $e) {
-            print_r("Database has gone away.");
-        } catch (ConstrainException $e) {
-            print_r("Database constrain not met.");
-        }
+        $this->transaction->delete($user);
+        $this->run();
     }
 }
