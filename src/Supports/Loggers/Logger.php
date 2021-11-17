@@ -33,11 +33,6 @@ final class Logger
     private array $handler = [];
 
     /**
-     * @var LoggerInterface|null The test logger interface
-     */
-    private ?LoggerInterface $testLogger;
-
-    /**
      * The constructor.
      *
      * @param array $settings The settings
@@ -46,11 +41,6 @@ final class Logger
     {
         $this->path = (string)($settings['path'] ?? '');
         $this->level = (int)($settings['level'] ?? MonologLogger::DEBUG);
-
-        // This can be used for testing to make the Factory testable
-        if (isset($settings['test'])) {
-            $this->testLogger = $settings['test'];
-        }
     }
 
     /**
@@ -62,10 +52,6 @@ final class Logger
      */
     public function createLogger(string $name = null): LoggerInterface
     {
-        if (isset($this->testLogger)) {
-            return $this->testLogger;
-        }
-
         $logger = new MonologLogger($name ?: UUID::uuid4()->toString());
 
         foreach ($this->handler as $handler) {
@@ -102,6 +88,7 @@ final class Logger
     public function addFileHandler(string $filename, int $level = null): self
     {
         $filename = sprintf('%s/%s', $this->path, $filename);
+
         /** @phpstan-ignore-next-line */
         $rotatingFileHandler = new RotatingFileHandler($filename, 0, $level ?? $this->level, true, 0777);
 
@@ -123,7 +110,7 @@ final class Logger
     public function addConsoleHandler(int $level = null): self
     {
         /** @phpstan-ignore-next-line */
-        $streamHandler = new StreamHandler('php://output', $level ?? $this->level);
+        $streamHandler = new StreamHandler('php://stdout', $level ?? $this->level);
         $streamHandler->setFormatter(new LineFormatter(null, null, false, true));
 
         $this->addHandler($streamHandler);

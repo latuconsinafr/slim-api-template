@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Controllers\v1;
 
 use App\Data\Entities\UserEntity;
-use App\Domain\User\User;
 use App\Messages\Requests\Users\UserCreateRequest;
 use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
 use App\Messages\Responses\Users\UserPagedResponse;
 use App\Services\UserService;
-use App\Supports\Responders\Responder;
+use App\Supports\Loggers\Logger;
+use App\Supports\Responders\ApiResponder;
 use App\Validators\Users\UserCreateRequestValidator;
 use App\Validators\Users\UserUpdateRequestValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Selective\Validation\Exception\ValidationException;
+use Psr\Log\LoggerInterface;
 
 /**
  * User Controller.
@@ -24,9 +24,9 @@ use Selective\Validation\Exception\ValidationException;
 final class UserController
 {
     /**
-     * @var Responder The generic responder.
+     * @var ApiResponder The generic api responder.
      */
-    private Responder $responder;
+    private ApiResponder $responder;
 
     /**
      * @var UserService The user repository.
@@ -34,15 +34,24 @@ final class UserController
     private UserService $userService;
 
     /**
+     * @var LoggerInterface The logger interface.
+     */
+    private LoggerInterface $logger;
+
+    /**
      * The constructor.
      * 
      * @param Responder $responder The generic responder.
      * @param UserService $userService The user service.
+     * @param Logger $logger The generic logger.
      */
-    public function __construct(Responder $responder, UserService $userService)
+    public function __construct(ApiResponder $responder, UserService $userService, Logger $logger)
     {
         $this->responder = $responder;
         $this->userService = $userService;
+        $this->logger = $logger->addFileHandler('user.log')
+            ->addConsoleHandler()
+            ->createLogger();
     }
 
     /**
@@ -56,15 +65,15 @@ final class UserController
      */
     public function getUsers(Request $request, Response $response): Response
     {
-        $queryParams = (array)$request->getQueryParams();
+        $this->logger->info("Try to get users.");
+
+        $$queryParams = (array)$request->getQueryParams();
         $limit = isset($queryParams['limit']) && $queryParams['limit'] > 0 ? (int)$queryParams['limit'] : 5;
         $pageNumber = isset($queryParams['pageNumber']) && $queryParams['pageNumber'] > 0 ? (int)$queryParams['pageNumber'] : 1;
 
-        $data = new UserPagedResponse($this->userService->findAllWithQuery($limit, $pageNumber));
-
-        return $this->responder
-            ->withJson($response, $data)
-            ->withStatus(200);
+        return $this->responder->OK($response, new UserPagedResponse(
+            $this->userService->findAllWithQuery($limit, $pageNumber)
+        ));
     }
 
     /**
@@ -78,21 +87,18 @@ final class UserController
      */
     public function getUserById(Request $request, Response $response, array $args): Response
     {
-        $id = $args['id'];
+        $this->logger->info("Try to get user.");
 
+        $id = $args['id'];
         $user = $this->userService->findById($id);
 
         if (!$user instanceof UserEntity) {
-            return $this->responder
-                ->withJson($response)
-                ->withStatus(404);
+            $this->logger->warning("User with id {$id} not found.");
+
+            return $this->responder->NotFound($response);
         }
 
-        $data = new UserDetailResponse($user);
-
-        return $this->responder
-            ->withJson($response, $data)
-            ->withStatus(200);
+        return $this->responder->OK($response, new UserDetailResponse($user));
     }
 
     /**
@@ -105,18 +111,20 @@ final class UserController
      */
     public function createUser(Request $request, Response $response): Response
     {
+        $this->logger->info("Try to create user.");
+
         $request = new UserCreateRequest((array)$request->getParsedBody());
         $validationResult = (new UserCreateRequestValidator($request))->validate();
 
         if ($validationResult->fails()) {
-            throw new ValidationException('Validation failed. Please check your input.', $validationResult);
+            $this->logger->warning("Validation failed with request: " . json_encode($request->request));
+
+            return $this->responder->UnprocessableEntity($response, $validationResult);
         }
 
         $this->userService->create($request->toEntity());
 
-        return $this->responder
-            ->withJson($response)
-            ->withStatus(201);
+        return $this->responder->Created($response);
     }
 
     /**
@@ -130,34 +138,36 @@ final class UserController
      */
     public function updateUser(Request $request, Response $response, array $args): Response
     {
+        $this->logger->info("Try to update user.");
+
         $request = new UserUpdateRequest($request->getParsedBody());
         $validationResult = (new UserUpdateRequestValidator($request))->validate();
 
         if ($validationResult->fails()) {
-            throw new ValidationException('Validation failed. Please check your input.', $validationResult);
+            $this->logger->warning("Validation failed with request: " . json_encode($request->request));
+
+            return $this->responder->UnprocessableEntity($response, $validationResult);
         }
 
         $id = $args['id'];
 
         if ($request->request[$request->id] != $id) {
-            return $this->responder
-                ->withJson($response)
-                ->withStatus(409);
+            $this->logger->warning("Request conflict with id {$id}.");
+
+            return $this->responder->Conflict($response);
         }
 
         $user = $this->userService->findById($id);
 
         if (!$user instanceof UserEntity) {
-            return $this->responder
-                ->withJson($response)
-                ->withStatus(404);
+            $this->logger->warning("User with id {$id} not found.");
+
+            return $this->responder->NotFound($response);
         }
 
         $this->userService->update($request->toEntity());
 
-        return $this->responder
-            ->withJson($response)
-            ->withStatus(200);
+        return $this->responder->OK($response);
     }
 
     /**
@@ -171,19 +181,19 @@ final class UserController
      */
     public function deleteUser(Request $request, Response $response, array $args): Response
     {
+        $this->logger->info("Try to delete user.");
+
         $id = $args['id'];
         $user = $this->userService->findById($id);
 
         if (!$user instanceof UserEntity) {
-            return $this->responder
-                ->withJson($response)
-                ->withStatus(404);
+            $this->logger->warning("User with id {$id} not found.");
+
+            return $this->responder->NotFound($response);
         }
 
         $this->userService->delete($id);
 
-        return $this->responder
-            ->withJson($response)
-            ->withStatus(200);
+        return $this->responder->OK($response);
     }
 }

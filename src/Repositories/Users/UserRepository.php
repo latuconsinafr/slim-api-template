@@ -6,6 +6,7 @@ namespace App\Repositories\Users;
 
 use App\Data\Entities\UserEntity;
 use App\Repositories\BaseRepository;
+use App\Supports\Loggers\Logger;
 use Cycle\ORM\ORM;
 use Cycle\ORM\Transaction;
 use InvalidArgumentException;
@@ -17,9 +18,14 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     /**
      * The constructor.
+     * 
+     * @param ORM $orm The cycle orm class.
+     * @param Logger $logger The generic logger.
      */
-    public function __construct(ORM $orm)
+    public function __construct(ORM $orm, Logger $logger)
     {
+        parent::__construct($logger, 'user.log');
+
         $this->orm = $orm;
         $this->transaction = new Transaction($this->orm);
         $this->repository = $orm->getRepository(UserEntity::class);
@@ -33,6 +39,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function findAll(): iterable
     {
         // Algorithm
+        $this->logger->info("Calling UserRepository findAll method.");
+
         return $this->repository->findAll();
     }
 
@@ -42,12 +50,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function findById(string $id): ?UserEntity
     {
         // Algorithm
-        if (!is_string($id)) {
-            throw new InvalidArgumentException("The type of given id is not a string. Input was: {$id}");
-        }
-        if (is_null($id)) {
-            throw new InvalidArgumentException("The given id value is null");
-        }
+        $this->logger->info("Calling UserRepository findById method with id {$id}.");
 
         return $this->repository->findByPK($id);
     }
@@ -58,6 +61,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function create(UserEntity $user): void
     {
         // Algorithm
+        $this->logger->info("Calling UserRepository create method with user: " . json_encode($user));
+
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
         }
@@ -72,6 +77,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function update(UserEntity $user): void
     {
         // Algorithm
+        $this->logger->info("Calling UserRepository update method with user: " . json_encode($user));
+
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
         }
@@ -97,6 +104,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function delete(UserEntity $user): void
     {
         // Algorithm
+        $this->logger->info("Calling UserRepository delete method with user: " . json_encode($user));
+
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
         }

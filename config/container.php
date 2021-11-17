@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Repositories\BaseRepository;
-use App\Repositories\BaseRepositoryInterface;
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Users\UserRepositoryInterface;
 use App\Supports\Handlers\ErrorHandler;
@@ -172,5 +170,5 @@ return [
 
     // Repositories definition with user repository injection
     UserRepositoryInterface::class => DI\create(UserRepository::class)
-        ->constructor(DI\get(ORM::class))
+        ->constructor(DI\get(ORM::class), DI\get(Logger::class))
 ];

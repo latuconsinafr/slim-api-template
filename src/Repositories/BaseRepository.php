@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Supports\Loggers\Logger;
 use Cycle\ORM\{ORM, Select, Transaction};
 use Cycle\ORM\Select\Repository;
+use Psr\Log\LoggerInterface;
 use Spiral\Database\Exception\StatementException\{ConnectionException, ConstrainException};
 use Spiral\Pagination\Paginator;
 
@@ -40,6 +42,11 @@ class BaseRepository
     protected Paginator $paginator;
 
     /**
+     * @var LoggerInterface The logger interface.
+     */
+    private LoggerInterface $logger;
+
+    /**
      * @var array The entity fields
      */
     protected array $fields = [];
@@ -47,8 +54,11 @@ class BaseRepository
     /**
      * The constructor.
      */
-    public function __construct()
+    public function __construct(Logger $logger, string $loggerFileName)
     {
+        $this->logger = $logger->addFileHandler($loggerFileName)
+            ->addConsoleHandler()
+            ->createLogger();
     }
 
     /**
@@ -57,6 +67,8 @@ class BaseRepository
     public function search(string $value = ''): BaseRepository
     {
         // Algorithm
+        $this->logger->info("Calling BaseRepository search method with value {$value}.");
+
         $this->select = $this->repository->select();
 
         foreach ($this->fields as $field) {
@@ -72,6 +84,8 @@ class BaseRepository
     public function count(): int
     {
         // Algorithm
+        $this->logger->info("Calling BaseRepository count method.");
+
         return $this->repository->select()->count();
     }
 
@@ -81,6 +95,8 @@ class BaseRepository
     public function orderBy(string $key = 'id', $sortMethod = 'asc'): BaseRepository
     {
         // Algorithm
+        $this->logger->info("Calling BaseRepository orderBy method with key {$key} and sort method {$sortMethod}.");
+
         $sortMethod = strtoupper($sortMethod);
         $key = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $key));
 
@@ -101,6 +117,8 @@ class BaseRepository
     public function paginate(int $limit = 5, int $pageNumber = 1): BaseRepository
     {
         // Algorithm
+        $this->logger->info("Calling BaseRepository paginate method with limit {$limit} and page number {$pageNumber}.");
+
         $paginator = new Paginator($limit);
 
         $paginator->withPage($pageNumber)->paginate($this->select);
@@ -115,6 +133,8 @@ class BaseRepository
     public function fetchAll(): iterable
     {
         // Algorithm
+        $this->logger->info("Calling BaseRepository fetchAll method.");
+
         return $this->select->fetchAll();
     }
 
@@ -127,10 +147,13 @@ class BaseRepository
     {
         // Algorithm
         try {
+            $this->logger->info("Calling BaseRepository run method.");
             $this->transaction->run();
         } catch (ConnectionException $e) {
+            $this->logger->warning($e->getMessage());
             throw $e;
         } catch (ConstrainException $e) {
+            $this->logger->warning($e->getMessage());
             throw $e;
         }
     }

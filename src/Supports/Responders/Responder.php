@@ -13,7 +13,7 @@ use function http_build_query;
 /**
  * Responder.
  */
-final class Responder
+class Responder
 {
     /**
      * @var PhpRenderer The php renderer

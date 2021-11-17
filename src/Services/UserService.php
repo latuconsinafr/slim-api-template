@@ -7,7 +7,9 @@ namespace App\Services;
 use App\Data\Entities\UserEntity;
 use App\Data\Paged;
 use App\Repositories\Users\UserRepositoryInterface;
+use App\Supports\Loggers\Logger;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 /**
  * The user service.
@@ -20,13 +22,22 @@ class UserService
     private UserRepositoryInterface $userRepository;
 
     /**
+     * @var LoggerInterface The logger interface.
+     */
+    private LoggerInterface $logger;
+
+    /**
      * The constructor.
      * 
      * @param UserRepositoryInterface $userRepository The user repository.
+     * @param Logger $logger The generic logger.
      */
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository, Logger $logger)
     {
         $this->userRepository = $userRepository;
+        $this->logger = $logger->addFileHandler('user.log')
+            ->addConsoleHandler()
+            ->createLogger();
     }
 
     /**
@@ -37,6 +48,8 @@ class UserService
     public function findAll(): iterable
     {
         // Algorithm
+        $this->logger->info("Calling UserService findAll method.");
+
         return $this->userRepository->findAll();
     }
 
@@ -54,6 +67,8 @@ class UserService
     public function findAllWithQuery(int $limit = 5, int $pageNumber = 1, string $orderByKey = 'id', string $orderByMethod = 'asc', string $search = ''): Paged
     {
         // Algorithm
+        $this->logger->info("Calling UserService findAllWithQuery method.");
+
         $results = $this->userRepository
             ->search($search)
             ->orderBy($orderByKey, $orderByMethod)
@@ -74,12 +89,7 @@ class UserService
     public function findById(string $id): ?UserEntity
     {
         // Algorithm
-        if (!is_string($id)) {
-            throw new InvalidArgumentException("The type of given id is not a string. Input was: {$id}");
-        }
-        if (is_null($id)) {
-            throw new InvalidArgumentException("The given id value is null");
-        }
+        $this->logger->info("Calling UserService findById method with id {$id}.");
 
         return $this->userRepository->findById($id);
     }
@@ -94,6 +104,8 @@ class UserService
     public function create(UserEntity $user): void
     {
         // Algorithm
+        $this->logger->info("Calling UserService create method with user: " . json_encode($user));
+
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
         }
@@ -111,6 +123,8 @@ class UserService
     public function update(UserEntity $user): void
     {
         // Algorithm
+        $this->logger->info("Calling UserService update method with user: " . json_encode($user));
+
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
         }
@@ -128,12 +142,7 @@ class UserService
     public function delete(string $id): void
     {
         // Algorithm
-        if (!is_string($id)) {
-            throw new InvalidArgumentException("The type of given id is not a string. Input was: {$id}");
-        }
-        if (is_null($id)) {
-            throw new InvalidArgumentException("The given id value is null");
-        }
+        $this->logger->info("Calling UserService delete method with id {$id}.");
 
         $user = $this->findById($id);
 
