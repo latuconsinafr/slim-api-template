@@ -1,13 +1,13 @@
 openapi: 3.0.2
 info:
   version: 1.0.0
-  title: Slim Clean Architecture Skeleton API
+  title: Slim Skeleton API
   contact:
     name: Farista Latuconsina
     url: "https://github.com/latuconsinafr"
     email: faristalatuconsina@gmail.com
   description: |-
-    This is a sample RESTful Server based on the OpenAPI 3.0 specification for the Slim Clean Architecture Skeleton API. 
+    This is a sample RESTful Server based on the OpenAPI 3.0 specification for the Slim Skeleton API. 
     You can find out more about Swagger at [https://swagger.io](https://swagger.io).
   license:
     name: Proprietary License
@@ -25,7 +25,7 @@ paths:
     get:
       tags:
         - User
-      summary: List of users
+      summary: List of user
       description: "Get list of users."
       operationId: getUsers
       responses:
@@ -34,29 +34,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Users"
-        "500":
-          $ref: "#/components/responses/500"
+                $ref: "#/components/schemas/UserPagedResponse"
+        "503":
+          $ref: "#/components/responses/503"
     post:
       tags:
         - User
       summary: Create user
-      description: "Create a single user."
+      description: "Create a specified user."
       operationId: createUser
       requestBody:
-        description: Created
+        description: Create user
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserRequest"
+              $ref: "#/components/schemas/UserCreateRequest"
       responses:
         "201":
-          description: Created
+          $ref: "#/components/responses/201"
         "422":
           $ref: "#/components/responses/422"
-        "500":
-          $ref: "#/components/responses/500"
-  "/users/{user_id}":
+        "503":
+          $ref: "#/components/responses/503"
+  "/users/{id}":
     get:
       tags:
         - User
@@ -64,7 +64,7 @@ paths:
       description: "Get a specified user by user id."
       operationId: getUserById
       parameters:
-        - name: user_id
+        - name: id
           in: path
           description: "The user id that needs to be fetched."
           required: true
@@ -78,11 +78,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserDetailResponse"
         "404":
           $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
     put:
       tags:
         - User
@@ -90,7 +90,7 @@ paths:
       description: "Update a specified user data by its user id."
       operationId: updateUser
       parameters:
-        - name: user_id
+        - name: id
           in: path
           description: "The user id that needs to be updated."
           required: true
@@ -103,7 +103,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserRequest"
+              $ref: "#/components/schemas/UserUpdateRequest"
       responses:
         "200":
           $ref: "#/components/responses/200"
@@ -113,8 +113,8 @@ paths:
           $ref: "#/components/responses/409"
         "404":
           $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
     delete:
       tags:
         - User
@@ -122,7 +122,7 @@ paths:
       description: "Delete a specified user by its user id."
       operationId: deleteUser
       parameters:
-        - name: user_id
+        - name: id
           in: path
           description: "The user id that needs to be deleted."
           required: true
@@ -135,8 +135,8 @@ paths:
           $ref: "#/components/responses/200"
         "404":
           $ref: "#/components/responses/404"
-        "500":
-          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
 components:
   responses:
     "200":
@@ -148,7 +148,7 @@ components:
       content:
         application/json: {}
     "204":
-      description: Successfully processed.
+      description: No Content.
       content:
         application/json: {}
     "400":
@@ -159,11 +159,11 @@ components:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: Your request does not seem to be valid.
+              message: The request cannot be fulfilled due to bad syntax.
               details:
-                - message: "A more detailed report, if available."
+                - message: A more detailed report, if available.
     "401":
-      description: Authorization information is missing or invalid.
+      description: Unauthorized.
       content:
         application/json:
           schema:
@@ -179,7 +179,7 @@ components:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: Forbidden. You are not allowed to access this location.
+              message: Forbidden. You are not allowed to access the resource.
     "404":
       description: Not Found.
       content:
@@ -188,25 +188,7 @@ components:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: Not Found.
-    "405":
-      description: Method not allowed.
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-          example:
-            error:
-              message: Request Method not allowed.
-    "406":
-      description: Not acceptable.
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-          example:
-            error:
-              message: The requested format is not supported.
+              message: The requested resource could not be found.
     "409":
       description: Conflict.
       content:
@@ -215,16 +197,16 @@ components:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: The requested conflict with current state of the target resource.
-    "415":
-      description: Unsupported Media Type.
+              message: The request could not be processed because of conflict in the request.
+    "412":
+      description: Precondition Failed.
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: The media type is not supported.
+              message: The server does not meet one of the precondition on the request.
     "422":
       description: Unprocessable Entity.
       content:
@@ -233,87 +215,158 @@ components:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: Input validation failed
+              message: Input validation failed.
               details:
                 - field: email
                   message: Invalid email address.
     "500":
-      description: Unexpected error.
+      description: Internal server error.
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: Unexpected internal Server Error.
+              message: Unexpected internal server error.
               details:
-                - message: "A more detailed report, if available."
+                - message: A more detailed report, if available.
     "503":
-      description: "Service Unavailable, e.g. Maintenance."
+      description: "Service Unavailable."
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              message: Service Unavailable.
+              message: The server is currently unavailable.
               details:
-                - message: Barakuda is currently under maintenance.
+                - message: A more detailed report, if available.
   schemas:
-    User:
-      type: object
+    UserPagedResponse:
       required:
-        - id
-        - user_name
-        - password
+        - pageInfo
+        - results
       properties:
-        id:
-          type: uuid
-          example: "4f8100e4-d3d0-48cb-947f-fd8518788328"
-        user_name:
-          type: string
-          example: latuconsinafr
-        email:
-          type: string
-          example: faristalatuconsina@gmail.com
-        phone_number:
-          type: string
-          example: "+6282246882912"
-        password:
-          type: string
-          example: "secret"
-    Users:
-      required:
-        - users
-      properties:
-        users:
+        pageInfo:
+          $ref: "#/components/schemas/Paged"
+        results:
           type: array
           description: List of users
           items:
-            $ref: "#/components/schemas/User"
-    UserRequest:
+            $ref: "#/components/schemas/UserDetailResponse"
+    UserDetailResponse:
       type: object
       required:
-        - user_name
-        - password
+        - id
+        - userName
       properties:
-        user_name:
+        id:
+          type: string
+          format: uuid
+          example: "4f8100e4-d3d0-48cb-947f-fd8518788328"
+        userName:
           type: string
           example: latuconsinafr
         email:
           type: string
           example: faristalatuconsina@gmail.com
-        phone_number:
+        phoneNumber:
+          type: string
+          example: "+6282246882912"
+    UserCreateRequest:
+      type: object
+      required:
+        - userName
+        - password
+      properties:
+        userName:
+          type: string
+          minLength: 4
+          maxLength: 16
+          example: latuconsinafr
+        email:
+          type: string
+          format: email
+          example: faristalatuconsina@gmail.com
+        phoneNumber:
           type: string
           example: "+6282246920012"
         password:
           type: string
+          minLength: 4
+          maxLength: 16
           example: "secret"
+    UserUpdateRequest:
+      type: object
+      required:
+        - id
+        - userName
+        - password
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        userName:
+          type: string
+          minLength: 4
+          maxLength: 16
+          example: latuconsinafr
+        email:
+          type: string
+          format: email
+          example: faristalatuconsina@gmail.com
+        phoneNumber:
+          type: string
+          example: "+6282246920012"
+        password:
+          type: string
+          minLength: 4
+          maxLength: 16
+          example: "secret"
+    Paged:
+      required:
+        - limit
+        - pageNumber
+        - count
+        - totalCount
+        - totalPages
+        - hasPreviousPage
+        - hasNextPage
+      properties:
+        limit:
+          type: integer
+          description: Limit per page
+          example: 5
+        pageNumber:
+          type: integer
+          description: Current page number
+          example: 1
+        count:
+          type: integer
+          description: Total data in current page
+          example: 5
+        totalCount:
+          type: integer
+          description: Total data
+          example: 10
+        totalPages:
+          type: integer
+          description: Total pages
+          example: 2
+        hasPreviousPage:
+          type: boolean
+          description: The flag indicates whether has previous page or not
+          example: false
+        hasNextPage:
+          type: boolean
+          description: The flag indicates whether has next page or not.
+          example: true
     Error:
       required:
-        - error
+        - errors
       properties:
-        error:
+        errors:
           type: object
           required:
             - message
@@ -327,6 +380,9 @@ components:
                 $ref: "#/components/schemas/ErrorDetails"
               description: The error details (e.g. validation errors)
     ErrorDetails:
+      required:
+        - field
+        - message
       properties:
         field:
           type: string
