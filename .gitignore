@@ -23,8 +23,10 @@ vendor/
 build/
 node_modules/
 
-.env
-public/.env
+.env*
+!.env.example
+public/.env*
+!.env.example
 
 env.php
 config/env.php
