@@ -30,7 +30,7 @@ class UserDetailResponse
      * @var string|null The user's phone number.
      */
     public ?string $phoneNumber;
-
+    
     /**
      * The constructor.
      * 

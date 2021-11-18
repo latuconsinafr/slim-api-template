@@ -44,7 +44,7 @@ class BaseRepository
     /**
      * @var LoggerInterface The logger interface.
      */
-    private LoggerInterface $logger;
+    protected LoggerInterface $logger;
 
     /**
      * @var array The entity fields
@@ -57,8 +57,8 @@ class BaseRepository
     public function __construct(Logger $logger, string $loggerFileName)
     {
         $this->logger = $logger->addFileHandler($loggerFileName)
-            ->addConsoleHandler()
-            ->createLogger();
+        ->addConsoleHandler()
+        ->createLogger();
     }
 
     /**
@@ -150,10 +150,10 @@ class BaseRepository
             $this->logger->info("Calling BaseRepository run method.");
             $this->transaction->run();
         } catch (ConnectionException $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             throw $e;
         } catch (ConstrainException $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             throw $e;
         }
     }

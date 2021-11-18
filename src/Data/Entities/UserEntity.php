@@ -6,12 +6,25 @@ namespace App\Data\Entities;
 
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Column;
+use Cycle\Annotated\Annotation\Table;
+use Cycle\Annotated\Annotation\Table\Index;
+use DateTimeImmutable;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @Entity(table="users")
+ * @Entity(
+ *  table="users", 
+ *  mapper="App\Data\Mappers\TimestampedMapper"
+ * )
+ * @Table(
+ *  indexes={
+ *      @Index(columns = {"user_name"}, unique = true),
+ *      @Index(columns = {"email"}, unique = true),
+ *      @Index(columns = {"phone_number"}, unique = true)
+ *  }
+ * )
  */
-class UserEntity
+class UserEntity extends DataLogEntity
 {
     /**
      * @Column(type="string(36)", primary=true)
@@ -42,7 +55,7 @@ class UserEntity
      * @var string
      */
     protected string $password;
-
+    
     /**
      * The constructor.
      * 

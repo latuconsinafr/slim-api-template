@@ -90,7 +90,7 @@ class UserService
     {
         // Algorithm
         $this->logger->info("Calling UserService findById method with id {$id}.");
-
+        
         return $this->userRepository->findById($id);
     }
 
@@ -104,7 +104,7 @@ class UserService
     public function create(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserService create method with user: " . json_encode($user));
+        $this->logger->info("Calling UserService create method with username {$user->getUserName()}.");
 
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
@@ -123,7 +123,7 @@ class UserService
     public function update(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserService update method with user: " . json_encode($user));
+        $this->logger->info("Calling UserService update method with id {$user->getId()}.");
 
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");

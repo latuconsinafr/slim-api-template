@@ -61,7 +61,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function create(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository create method with user: " . json_encode($user));
+        $this->logger->info("Calling UserRepository create method with username {$user->getUserName()}.");
 
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
@@ -77,7 +77,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function update(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository update method with user: " . json_encode($user));
+        $this->logger->info("Calling UserRepository update method with id {$user->getId()}.");
 
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
@@ -104,7 +104,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function delete(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository delete method with user: " . json_encode($user));
+        $this->logger->info("Calling UserRepository delete method with id {$user->getId()}.");
 
         if (!$user instanceof UserEntity) {
             throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
