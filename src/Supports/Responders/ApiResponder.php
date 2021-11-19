@@ -133,13 +133,9 @@ final class ApiResponder extends Responder
      * 
      * @return ResponseInterface The response interface.
      */
-    public function UnprocessableEntity(ResponseInterface $response, ValidationResult $validationResult = null, string $message = StatusMessageInterface::STATUS_UNPROCESSABLE_ENTITY): ResponseInterface
+    public function UnprocessableEntity(ResponseInterface $response, string $message = StatusMessageInterface::STATUS_UNPROCESSABLE_ENTITY): ResponseInterface
     {
-        if ($validationResult instanceof ValidationResult) {
-            throw new ValidationException("Input validation failed.", $validationResult);
-        } else {
-            return $this->withJson($response, $this->getErrorsResponse($message))->withStatus(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY);
-        }
+        return $this->withJson($response, $this->getErrorsResponse($message))->withStatus(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -181,17 +177,4 @@ final class ApiResponder extends Responder
             "errors" => ["message" => $message]
         ];
     }
-}
-
-interface StatusMessageInterface
-{
-    // Client Errors 4xx
-    const STATUS_BAD_REQUEST = "The request cannot be fulfilled due to bad syntax.";
-    const STATUS_NOT_FOUND = "The requested resource could not be found.";
-    const STATUS_CONFLICT = "The request could not be processed because of conflict in the request.";
-    const STATUS_PRECONDITION_FAILED = "The server does not meet one of the precondition on the request.";
-    const STATUS_UNPROCESSABLE_ENTITY = "The request was unable to be followed due to semantic errors.";
-    // Server Errors 5xx
-    const STATUS_INTERNAL_SERVER_ERROR = "Unexpected internal server error.";
-    const STATUS_SERVICE_UNAVAILABLE = "The server is currently unavailable.";
 }

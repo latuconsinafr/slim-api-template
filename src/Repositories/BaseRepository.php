@@ -52,13 +52,13 @@ class BaseRepository
     protected array $fields = [];
 
     /**
-     * The constructor.
+     * @param Logger $logger The logger.
      */
-    public function __construct(Logger $logger, string $loggerFileName)
+    public function __construct(Logger $logger)
     {
-        $this->logger = $logger->addFileHandler($loggerFileName)
-        ->addConsoleHandler()
-        ->createLogger();
+        $this->logger = $logger->addFileHandler()
+            ->addConsoleHandler()
+            ->createLogger();
     }
 
     /**

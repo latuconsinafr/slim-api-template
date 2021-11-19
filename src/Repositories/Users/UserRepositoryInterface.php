@@ -20,6 +20,15 @@ interface UserRepositoryInterface extends BaseRepositoryInterface
     public function findAll(): iterable;
 
     /**
+     * The get specified user by specified key value.
+     * 
+     * @param array $keyValue The key value pair to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
+    public function findOne(array $keyValue): ?UserEntity;
+
+    /**
      * The get specified user by id repository.
      * 
      * @param string $id The specified user's id to find.

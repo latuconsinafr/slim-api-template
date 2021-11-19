@@ -18,39 +18,45 @@ use Ramsey\Uuid\Uuid;
 final class Logger
 {
     /**
-     * @var string The log file path
+     * @var string The log file path.
      */
     private string $path;
 
     /**
-     * @var int The log level
+     * @var string The log file name.
+     */
+    private string $filename;
+
+    /**
+     * @var int The log level.
      */
     private int $level;
 
     /**
-     * @var array The log handler
+     * @var array The log handler.
      */
     private array $handler = [];
 
     /**
      * The constructor.
      *
-     * @param array $settings The settings
+     * @param array $settings The settings.
      */
     public function __construct(array $settings = [])
     {
         $this->path = (string)($settings['path'] ?? '');
-        $this->level = (int)($settings['level'] ?? MonologLogger::DEBUG);
+        $this->filename = (string)($settings['filename'] ?? 'app.log');
+        $this->level = (int)($settings['level'] ?? MonologLogger::INFO);
     }
 
     /**
      * Build the logger.
      *
-     * @param string|null $name The logging channel
+     * @param string|null $name The logging channel.
      *
-     * @return LoggerInterface The logger
+     * @return LoggerInterface The logger.
      */
-    public function createLogger(string $name = null): LoggerInterface
+    public function createLogger(?string $name = null): LoggerInterface
     {
         $logger = new MonologLogger($name ?: UUID::uuid4()->toString());
 
@@ -66,9 +72,9 @@ final class Logger
     /**
      * Add a handler.
      *
-     * @param HandlerInterface $handler The handler
+     * @param HandlerInterface $handler The handler.
      *
-     * @return self The logger factory
+     * @return self The logger factory.
      */
     public function addHandler(HandlerInterface $handler): self
     {
@@ -85,9 +91,9 @@ final class Logger
      *
      * @return self The logger factory
      */
-    public function addFileHandler(string $filename, int $level = null): self
+    public function addFileHandler(?string $filename = null, ?int $level = null): self
     {
-        $filename = sprintf('%s/%s', $this->path, $filename);
+        $filename = sprintf('%s/%s', $this->path, $filename ?? $this->filename);
 
         /** @phpstan-ignore-next-line */
         $rotatingFileHandler = new RotatingFileHandler($filename, 0, $level ?? $this->level, true, 0777);
@@ -107,7 +113,7 @@ final class Logger
      *
      * @return self The logger factory
      */
-    public function addConsoleHandler(int $level = null): self
+    public function addConsoleHandler(?int $level = null): self
     {
         /** @phpstan-ignore-next-line */
         $streamHandler = new StreamHandler('php://stdout', $level ?? $this->level);

@@ -19,7 +19,7 @@ use InvalidArgumentException;
 use Throwable;
 
 /**
- * Error Renderer.
+ * Error Handler.
  */
 final class ErrorHandler implements ErrorHandlerInterface
 {
@@ -53,7 +53,7 @@ final class ErrorHandler implements ErrorHandlerInterface
         $this->responder = $responder;
         $this->responseFactory = $responseFactory;
         $this->logger = $logger
-            ->addFileHandler('error.log')
+            ->addFileHandler()
             ->addConsoleHandler()
             ->createLogger();
     }

@@ -24,7 +24,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function __construct(ORM $orm, Logger $logger)
     {
-        parent::__construct($logger, 'user.log');
+        parent::__construct($logger);
 
         $this->orm = $orm;
         $this->transaction = new Transaction($this->orm);
@@ -42,6 +42,17 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->logger->info("Calling UserRepository findAll method.");
 
         return $this->repository->findAll();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function findOne(array $keyValue): ?UserEntity
+    {
+        // Algorithm
+        $this->logger->info("Calling UserRepository findOne method with key value {$keyValue}.");
+
+        return $this->repository->findOne($keyValue);
     }
 
     /**

@@ -7,9 +7,9 @@ namespace App\Validators\Users;
 use App\Supports\Validators\Validator;
 
 /**
- * Validator for user create request.
+ * Validator for user update request.
  */
-class UserCreateRequestValidator extends Validator
+class UserUpdateRequestValidator extends Validator
 {
     /**
      * The constructor.
@@ -19,6 +19,11 @@ class UserCreateRequestValidator extends Validator
     public function __construct(array $request)
     {
         parent::__construct($request);
+
+        $this->validator
+            ->requirePresence('id')
+            ->notEmptyString('id')
+            ->uuid('id');
 
         $this->validator
             ->requirePresence('userName')

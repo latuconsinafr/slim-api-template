@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Data\Entities;
 
+use App\Data\DataLogEntity;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Table;

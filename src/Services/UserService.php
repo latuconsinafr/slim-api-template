@@ -35,7 +35,7 @@ class UserService
     public function __construct(UserRepositoryInterface $userRepository, Logger $logger)
     {
         $this->userRepository = $userRepository;
-        $this->logger = $logger->addFileHandler('user.log')
+        $this->logger = $logger->addFileHandler()
             ->addConsoleHandler()
             ->createLogger();
     }
@@ -90,8 +90,23 @@ class UserService
     {
         // Algorithm
         $this->logger->info("Calling UserService findById method with id {$id}.");
-        
+
         return $this->userRepository->findById($id);
+    }
+
+    /**
+     * The find by user name service.
+     * 
+     * @param string $userName The specified user's user name to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
+    public function findByUserName(string $userName): ?UserEntity
+    {
+        // Algorithm
+        $this->logger->info("Calling UserService findByUserName method with user name {$userName}.");
+
+        return $this->userRepository->findOne(['userName' => $userName]);
     }
 
     /**

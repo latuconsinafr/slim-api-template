@@ -12,8 +12,6 @@ use App\Messages\Responses\Users\UserPagedResponse;
 use App\Services\UserService;
 use App\Supports\Loggers\Logger;
 use App\Supports\Responders\ApiResponder;
-use App\Validators\Users\UserCreateRequestValidator;
-use App\Validators\Users\UserUpdateRequestValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -49,7 +47,7 @@ final class UserController
     {
         $this->responder = $responder;
         $this->userService = $userService;
-        $this->logger = $logger->addFileHandler('user.log')
+        $this->logger = $logger->addFileHandler()
             ->addConsoleHandler()
             ->createLogger();
     }
@@ -113,15 +111,7 @@ final class UserController
     {
         $this->logger->info("Try to create user.");
 
-        $request = new UserCreateRequestValidator((array)$request->getParsedBody());
-        // $request = new UserCreateRequest((array)$request->getParsedBody());
-        // $validationResult = (new UserCreateRequestValidator($request))->validate();
-
-        // if ($validationResult->fails()) {
-        //     $this->logger->warning("Validation failed with request: " . json_encode($request->request));
-
-        //     return $this->responder->UnprocessableEntity($response, $validationResult);
-        // }
+        $request = new UserCreateRequest((array)$request->getParsedBody());
 
         $this->userService->create($request->toEntity());
 
@@ -141,18 +131,11 @@ final class UserController
     {
         $this->logger->info("Try to update user.");
 
-        $request = new UserUpdateRequest($request->getParsedBody());
-        $validationResult = (new UserUpdateRequestValidator($request))->validate();
-
-        if ($validationResult->fails()) {
-            $this->logger->warning("Validation failed with request: " . json_encode($request->request));
-
-            return $this->responder->UnprocessableEntity($response, $validationResult);
-        }
+        $request = new UserUpdateRequest((array)$request->getParsedBody());
 
         $id = $args['id'];
 
-        if ($request->request[$request->id] != $id) {
+        if ($request->id != $id) {
             $this->logger->warning("Request conflict with id {$id}.");
 
             return $this->responder->Conflict($response);

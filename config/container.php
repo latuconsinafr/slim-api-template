@@ -40,6 +40,7 @@ use Spiral\Tokenizer\ClassLocator;
 use Symfony\Component\Finder\Finder;
 
 return [
+
     // Application settings
     'settings' => function () {
         $settings = __DIR__ . '/settings.php';
@@ -121,17 +122,12 @@ return [
         $settings = $container->get('settings')['error'];
         $app = $container->get(App::class);
 
-        $logger = $container->get(Logger::class)
-            ->addFileHandler($settings['log_filename'] ?? 'error.log')
-            ->createLogger();
-
         $errorMiddleware = new ErrorMiddleware(
             $app->getCallableResolver(),
             $app->getResponseFactory(),
             (bool)$settings['display_error_details'] ?? false,
             (bool)$settings['log_errors'] ?? false,
             (bool)$settings['log_error_details'] ?? false,
-            $logger
         );
 
         $errorMiddleware->setDefaultErrorHandler($container->get(ErrorHandler::class));

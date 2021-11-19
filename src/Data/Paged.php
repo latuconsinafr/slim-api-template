@@ -7,7 +7,7 @@ namespace App\Data;
 use ArrayIterator;
 
 /**
- * The paged.
+ * The generic paged.
  */
 class Paged
 {

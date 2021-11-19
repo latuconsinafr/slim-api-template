@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Data\Entities;
+namespace App\Data;
 
 use DateTimeImmutable;
 
@@ -14,12 +14,12 @@ class DataLogEntity
     /**
      * @var DateTimeImmutable The resource created at timestamp.
      */
-    protected DateTimeImmutable $created_at;
+    protected ?DateTimeImmutable $created_at = null;
 
     /**
      * @var DateTimeImmutable The resource updated at timestamp.
      */
-    protected DateTimeImmutable $updated_at;
+    protected ?DateTimeImmutable $updated_at = null;
 
     /**
      * The created at getter.
