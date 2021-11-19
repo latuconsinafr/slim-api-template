@@ -42,7 +42,10 @@ use Symfony\Component\Finder\Finder;
 return [
     // Application settings
     'settings' => function () {
-        return require __DIR__ . '/settings.php';
+        $settings = __DIR__ . '/settings.php';
+        if (!file_exists($settings)) throw new ConfigException('settings.php does not exist.');
+
+        return require $settings;
     },
 
     // Application definition with container interface injection
@@ -52,10 +55,14 @@ return [
         $app = AppFactory::create();
 
         // Register routes
-        (require __DIR__ . '/routes.php')($app);
+        $routes = __DIR__ . '/routes.php';
+        if (!file_exists($routes)) throw new ConfigException('routes.php does not exist.');
+        (require $routes)($app);
 
         // Register middleware
-        (require __DIR__ . '/middleware.php')($app);
+        $middleware = __DIR__ . '/middleware.php';
+        if (!file_exists($middleware)) throw new ConfigException('middleware.php does not exist.');
+        (require $middleware)($app);
 
         return $app;
     },
@@ -77,23 +84,9 @@ return [
         return $container->get(Psr17Factory::class);
     },
 
-    // The logger definition with container interface injection
-    Logger::class => function (ContainerInterface $container) {
-        return new Logger($container->get('settings')['logger']);
-    },
-
     // Route parser definition with container interface injection
     RouteParserInterface::class => function (ContainerInterface $container) {
         return $container->get(App::class)->getRouteCollector()->getRouteParser();
-    },
-
-    // Php renderer definition with container interface injection
-    PhpRenderer::class => function (ContainerInterface $container) {
-        if (!isset($container->get('settings')['template'])) {
-            throw new ConfigException('Expected template settings');
-        }
-
-        return new PhpRenderer($container->get('settings')['template']);
     },
 
     // Validation exception middleware definition with container interface injection
@@ -107,21 +100,37 @@ return [
         );
     },
 
+    // The logger definition with container interface injection
+    Logger::class => function (ContainerInterface $container) {
+        if (!isset($container->get('settings')['logger'])) throw new ConfigException('Expected logger settings.');
+
+        return new Logger($container->get('settings')['logger']);
+    },
+
+    // Php renderer definition with container interface injection
+    PhpRenderer::class => function (ContainerInterface $container) {
+        if (!isset($container->get('settings')['template'])) throw new ConfigException('Expected template settings.');
+
+        return new PhpRenderer($container->get('settings')['template']);
+    },
+
     // Error middleware definition with container interface injection
     ErrorMiddleware::class => function (ContainerInterface $container) {
+        if (!isset($container->get('settings')['error'])) throw new ConfigException('Expected error settings.');
+
         $settings = $container->get('settings')['error'];
         $app = $container->get(App::class);
 
         $logger = $container->get(Logger::class)
-            ->addFileHandler('error.log')
+            ->addFileHandler($settings['log_filename'] ?? 'error.log')
             ->createLogger();
 
         $errorMiddleware = new ErrorMiddleware(
             $app->getCallableResolver(),
             $app->getResponseFactory(),
-            (bool)$settings['display_error_details'],
-            (bool)$settings['log_errors'],
-            (bool)$settings['log_error_details'],
+            (bool)$settings['display_error_details'] ?? false,
+            (bool)$settings['log_errors'] ?? false,
+            (bool)$settings['log_error_details'] ?? false,
             $logger
         );
 
@@ -132,16 +141,8 @@ return [
 
     // ORM definition with container interface injection
     ORM::class => function (ContainerInterface $container) {
-        $settings = $container->has('settings')
-            ? $container->get('settings')
-            : [];
-
-        if (!isset($settings['database'])) {
-            throw new ConfigException('Expected database settings');
-        }
-        if (!isset($settings['entity'])) {
-            throw new ConfigException('Expected entity settings');
-        }
+        if (!isset($container->get('settings')['database'])) throw new ConfigException('Expected database settings.');
+        if (!isset($container->get('settings')['entity'])) throw new ConfigException('Expected entity settings.');
 
         $database = $container->get('settings')['database'];
         $entity = $container->get('settings')['entity'];

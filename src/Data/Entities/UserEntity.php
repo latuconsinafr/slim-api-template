@@ -8,7 +8,6 @@ use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Table;
 use Cycle\Annotated\Annotation\Table\Index;
-use DateTimeImmutable;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -55,7 +54,7 @@ class UserEntity extends DataLogEntity
      * @var string
      */
     protected string $password;
-    
+
     /**
      * The constructor.
      * 

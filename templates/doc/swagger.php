@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>API Specification - Swagger UI</title>
+    <title>API Specification - <?= $_ENV['APP_NAME'] ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.35.0/swagger-ui.min.css" integrity="sha512-jsql70MmFqKJfWGCXmi3GHPP2q2oi3Ad+6PRQWNeo6df+rxKB07IuBvcCXSrpgKPXaikkQgEQVO2YrtgmSJhUw==" crossorigin="anonymous" />
 </head>
 

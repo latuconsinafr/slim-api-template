@@ -5,48 +5,46 @@ declare(strict_types=1);
 namespace App\Validators\Users;
 
 use App\Messages\Requests\Users\UserCreateRequest;
-use App\Validators\BaseValidator;
+use Cake\Validation\Validator;
+use Selective\Validation\Exception\ValidationException;
+use Selective\Validation\Factory\CakeValidationFactory;
 
-/**
- * The validator for user create request.
- */
-class UserCreateRequestValidator extends BaseValidator
+final class UserCreateRequestValidator extends UserCreateRequest
 {
-    /**
-     * @var UserCreateRequest The request to validate.
-     */
-    protected UserCreateRequest $request;
-
-    /**
-     * The constructor.
-     * 
-     * @param UserCreateRequest $request The request to validate.
-     */
-    public function __construct(UserCreateRequest $request)
+    public function __construct(array $request)
     {
-        parent::__construct($request->request);
+        $validationFactory = new CakeValidationFactory();
+        $validator = $validationFactory->createValidator();
 
-        $this->request = $request;
-        $this->rules();
-    }
+        $validator
+            ->requirePresence('userName')
+            ->notEmptyString('userName')
+            ->lengthBetween('userName', [4, 16])
+            ->alphaNumeric('userName');
 
-    /**
-     * Set the validation rules.
-     * 
-     * @return void
-     */
-    public function rules(): void
-    {
-        $this->validator
-            ->requirePresence($this->request->userName)
-            ->lengthBetween($this->request->userName, [4, 16])
-            ->alphaNumeric($this->request->userName);
+        $validator
+            ->notEmptyString('email')
+            ->email('email');
 
-        $this->validator
-            ->email($this->request->email);
+        $validator
+            ->notEmptyString('phoneNumber');
 
-        $this->validator
-            ->requirePresence($this->request->password)
-            ->lengthBetween($this->request->password, [4, 16]);
+        $validator
+            ->requirePresence('password')
+            ->notEmptyString('password')
+            ->lengthBetween('password', [4, 16]);
+
+        // Convert validator errors to ValidationResult
+        $validationResult = $validationFactory->createValidationResult(
+            $validator->validate($request)
+        );
+
+        if ($validationResult->fails()) {
+            throw new ValidationException('Validation failed. Please check your input.', $validationResult, 422);
+        }
+
+        foreach ($request as $key => $value) {
+            $this->$key = $value;
+        }
     }
 }

@@ -19,6 +19,15 @@ use Cycle\Annotated\Annotation\Table;
  */
 class TimestampedMapper extends Mapper
 {
+    /**
+     * The create entity queue.
+     * 
+     * @param mixed $entity The entity.
+     * @param Node $node The node.
+     * @param State $state The state.
+     * 
+     * @return ContextCarrierInterface
+     */
     public function queueCreate($entity, Node $node, State $state): ContextCarrierInterface
     {
         $cmd = parent::queueCreate($entity, $node, $state);
@@ -32,6 +41,15 @@ class TimestampedMapper extends Mapper
         return $cmd;
     }
 
+    /**
+     * The update entity queue.
+     * 
+     * @param mixed $entity The entity.
+     * @param Node $node The node.
+     * @param State $state The state.
+     * 
+     * @return ContextCarrierInterface
+     */
     public function queueUpdate($entity, Node $node, State $state): ContextCarrierInterface
     {
         /** @var Update $cmd */

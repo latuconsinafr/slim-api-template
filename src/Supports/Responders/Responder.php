@@ -18,17 +18,17 @@ class Responder
     /**
      * @var PhpRenderer The php renderer
      */
-    private PhpRenderer $phpRenderer;
+    protected PhpRenderer $phpRenderer;
 
     /**
      * @var RouteParserInterface The route parser
      */
-    private RouteParserInterface $routeParser;
+    protected RouteParserInterface $routeParser;
 
     /**
      * @var ResponseFactoryInterface The response factory
      */
-    private ResponseFactoryInterface $responseFactory;
+    protected ResponseFactoryInterface $responseFactory;
 
     /**
      * The constructor.

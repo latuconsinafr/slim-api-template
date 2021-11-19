@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Supports\Responders\Responder;
+use App\Supports\Responders\ApiResponder;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Doc v1 Controller.
@@ -15,14 +14,16 @@ use Symfony\Component\Yaml\Yaml;
 final class DocV1Controller
 {
     /**
-     * @var Responder The generic responder
+     * @var ApiResponder The generic api responder.
      */
-    private Responder $responder;
+    private ApiResponder $responder;
 
     /**
      * The constructor.
+     * 
+     * @param ApiResponder $responder The generic api responder.
      */
-    public function __construct(Responder $responder)
+    public function __construct(ApiResponder $responder)
     {
         $this->responder = $responder;
     }
@@ -32,18 +33,21 @@ final class DocV1Controller
      * 
      * @param Request $request The request.
      * @param Response $response The response.
-     * @param array $args The query parameters.
      * 
-     * @return Response
+     * @return Response The response.
      */
-    public function index(Request $request, Response $response, array $args): Response
+    public function index(Request $request, Response $response): Response
     {
-        $docV1 = __DIR__ . '/../../resources/api/docV1.yaml';
+        $docV1 = __DIR__ . '/../../resources/api/docV1.json';
 
-        $viewData = [
-            'spec' => json_encode(Yaml::parseFile($docV1)),
-        ];
+        if (!file_exists($docV1)) {
+            return $this->responder->NotFound($response);
+        }
 
-        return $this->responder->withTemplate($response, 'doc/swagger.php', $viewData);
+        $contents = json_decode(file_get_contents($docV1));
+
+        // Inject the doc contents with environment variable here
+
+        return $this->responder->withTemplate($response, 'doc/swagger.php', ['spec' => json_encode($contents)]);
     }
 }

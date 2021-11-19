@@ -113,14 +113,15 @@ final class UserController
     {
         $this->logger->info("Try to create user.");
 
-        $request = new UserCreateRequest((array)$request->getParsedBody());
-        $validationResult = (new UserCreateRequestValidator($request))->validate();
+        $request = new UserCreateRequestValidator((array)$request->getParsedBody());
+        // $request = new UserCreateRequest((array)$request->getParsedBody());
+        // $validationResult = (new UserCreateRequestValidator($request))->validate();
 
-        if ($validationResult->fails()) {
-            $this->logger->warning("Validation failed with request: " . json_encode($request->request));
+        // if ($validationResult->fails()) {
+        //     $this->logger->warning("Validation failed with request: " . json_encode($request->request));
 
-            return $this->responder->UnprocessableEntity($response, $validationResult);
-        }
+        //     return $this->responder->UnprocessableEntity($response, $validationResult);
+        // }
 
         $this->userService->create($request->toEntity());
 

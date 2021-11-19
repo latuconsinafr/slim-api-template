@@ -1,0 +1,589 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "version": "1.0.0",
+        "title": "Slim Skeleton API",
+        "contact": {
+            "name": "Farista Latuconsina",
+            "url": "https://github.com/latuconsinafr",
+            "email": "faristalatuconsina@gmail.com"
+        },
+        "description": "This is a sample RESTful Server based on the OpenAPI 3.0 specification for the Slim Skeleton API. \nYou can find out more about Swagger at [https://swagger.io](https://swagger.io).",
+        "license": {
+            "name": "Proprietary License",
+            "url": "https://en.wikipedia.org/wiki/Proprietary_software"
+        }
+    },
+    "externalDocs": {
+        "description": "External Documentation",
+        "url": "https://example.com/documentation"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/v1",
+            "description": "Development"
+        }
+    ],
+    "tags": [
+        {
+            "name": "User"
+        }
+    ],
+    "paths": {
+        "/users": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "List of user",
+                "description": "Get list of users.",
+                "operationId": "getUsers",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserPagedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create user",
+                "description": "Create a specified user.",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "Create user",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user",
+                "description": "Get a specified user by user id.",
+                "operationId": "getUserById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The user id that needs to be fetched.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "4f8100e4-d3d0-48cb-947f-fd8518788328"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDetailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update user",
+                "description": "Update a specified user data by its user id.",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The user id that needs to be updated.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "4f8100e4-d3d0-48cb-947f-fd8518788328"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update an existent user",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/409"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete user",
+                "description": "Delete a specified user by its user id.",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The user id that needs to be deleted.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "4f8100e4-d3d0-48cb-947f-fd8518788328"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "200": {
+                "description": "OK.",
+                "content": {
+                    "application/json": {}
+                }
+            },
+            "201": {
+                "description": "Created.",
+                "content": {
+                    "application/json": {}
+                }
+            },
+            "204": {
+                "description": "No Content.",
+                "content": {
+                    "application/json": {}
+                }
+            },
+            "400": {
+                "description": "Bad request.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "The request cannot be fulfilled due to bad syntax.",
+                                "details": [
+                                    {
+                                        "message": "A more detailed report, if available."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "401": {
+                "description": "Unauthorized.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "Authorization information is missing or invalid."
+                            }
+                        }
+                    }
+                }
+            },
+            "403": {
+                "description": "Forbidden.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "Forbidden. You are not allowed to access the resource."
+                            }
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "Not Found.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "The requested resource could not be found."
+                            }
+                        }
+                    }
+                }
+            },
+            "409": {
+                "description": "Conflict.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "The request could not be processed because of conflict in the request."
+                            }
+                        }
+                    }
+                }
+            },
+            "412": {
+                "description": "Precondition Failed.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "The server does not meet one of the precondition on the request."
+                            }
+                        }
+                    }
+                }
+            },
+            "422": {
+                "description": "Unprocessable Entity.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "Input validation failed.",
+                                "details": [
+                                    {
+                                        "field": "email",
+                                        "message": "Invalid email address."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Internal server error.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "Unexpected internal server error.",
+                                "details": [
+                                    {
+                                        "message": "A more detailed report, if available."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "503": {
+                "description": "Service Unavailable.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "example": {
+                            "error": {
+                                "message": "The server is currently unavailable.",
+                                "details": [
+                                    {
+                                        "message": "A more detailed report, if available."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "UserPagedResponse": {
+                "required": [
+                    "pageInfo",
+                    "results"
+                ],
+                "properties": {
+                    "pageInfo": {
+                        "$ref": "#/components/schemas/Paged"
+                    },
+                    "results": {
+                        "type": "array",
+                        "description": "List of users",
+                        "items": {
+                            "$ref": "#/components/schemas/UserDetailResponse"
+                        }
+                    }
+                }
+            },
+            "UserDetailResponse": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "userName"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "4f8100e4-d3d0-48cb-947f-fd8518788328"
+                    },
+                    "userName": {
+                        "type": "string",
+                        "example": "latuconsinafr"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "faristalatuconsina@gmail.com"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "+6282246882912"
+                    }
+                }
+            },
+            "UserCreateRequest": {
+                "type": "object",
+                "required": [
+                    "userName",
+                    "password"
+                ],
+                "properties": {
+                    "userName": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
+                        "example": "latuconsinafr"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "faristalatuconsina@gmail.com"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "+6282246920012"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
+                        "example": "secret"
+                    }
+                }
+            },
+            "UserUpdateRequest": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "userName",
+                    "password"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "userName": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
+                        "example": "latuconsinafr"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "faristalatuconsina@gmail.com"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "+6282246920012"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
+                        "example": "secret"
+                    }
+                }
+            },
+            "Paged": {
+                "required": [
+                    "limit",
+                    "pageNumber",
+                    "count",
+                    "totalCount",
+                    "totalPages",
+                    "hasPreviousPage",
+                    "hasNextPage"
+                ],
+                "properties": {
+                    "limit": {
+                        "type": "integer",
+                        "description": "Limit per page",
+                        "example": 5
+                    },
+                    "pageNumber": {
+                        "type": "integer",
+                        "description": "Current page number",
+                        "example": 1
+                    },
+                    "count": {
+                        "type": "integer",
+                        "description": "Total data in current page",
+                        "example": 5
+                    },
+                    "totalCount": {
+                        "type": "integer",
+                        "description": "Total data",
+                        "example": 10
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "description": "Total pages",
+                        "example": 2
+                    },
+                    "hasPreviousPage": {
+                        "type": "boolean",
+                        "description": "The flag indicates whether has previous page or not",
+                        "example": false
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "description": "The flag indicates whether has next page or not.",
+                        "example": true
+                    }
+                }
+            },
+            "Error": {
+                "required": [
+                    "errors"
+                ],
+                "properties": {
+                    "errors": {
+                        "type": "object",
+                        "required": [
+                            "message"
+                        ],
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "description": "The error message"
+                            },
+                            "details": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ErrorDetails"
+                                },
+                                "description": "The error details (e.g. validation errors)"
+                            }
+                        }
+                    }
+                }
+            },
+            "ErrorDetails": {
+                "required": [
+                    "field",
+                    "message"
+                ],
+                "properties": {
+                    "field": {
+                        "type": "string",
+                        "description": "The name of the invalid field"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "The error message"
+                    }
+                }
+            }
+        }
+    }
+}

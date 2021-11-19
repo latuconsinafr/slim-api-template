@@ -6,15 +6,25 @@ namespace App\Data\Entities;
 
 use DateTimeImmutable;
 
+/**
+ * The generic data log entity.
+ */
 class DataLogEntity
 {
+    /**
+     * @var DateTimeImmutable The resource created at timestamp.
+     */
     protected DateTimeImmutable $created_at;
+
+    /**
+     * @var DateTimeImmutable The resource updated at timestamp.
+     */
     protected DateTimeImmutable $updated_at;
 
     /**
      * The created at getter.
      * 
-     * @return DateTimeImmutable
+     * @return DateTimeImmutable The timestamp.
      */
     public function getCreatedAt(): DateTimeImmutable
     {
@@ -24,7 +34,7 @@ class DataLogEntity
     /**
      * The update at getter.
      * 
-     * @return DateTimeImmutable
+     * @return DateTimeImmutable The timestamp.
      */
     public function getUpdatedAt(): DateTimeImmutable
     {

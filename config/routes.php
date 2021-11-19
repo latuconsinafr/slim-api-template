@@ -17,10 +17,13 @@ return function (App $app) {
     // Swagger API documentation
     $app->get('/docs/v1', [DocV1Controller::class, 'index'])->setName('docs');
 
-    // Application route list : api/v1
+    // Application route list
     $app->group(
+
+        // API version 1
         '/api/v1',
         function (Group $app) {
+
             // Users
             $app->get('/users', [UserController::class, 'getUsers']);
             $app->post('/users', [UserController::class, 'createUser']);

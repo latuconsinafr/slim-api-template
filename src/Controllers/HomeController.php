@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Supports\Responders\Responder;
+use App\Supports\Responders\ApiResponder;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -14,28 +14,25 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 final class HomeController
 {
     /**
-     * @var Responder The generic responder
+     * @var ApiResponder The generic api responder.
      */
-    private Responder $responder;
+    private ApiResponder $responder;
 
     /**
-     * The constructor.
+     * @param ApiResponder $responder The generic api responder.
      */
-    public function __construct(Responder $responder)
+    public function __construct(ApiResponder $responder)
     {
         $this->responder = $responder;
     }
 
     /**
-     * The index.
-     * 
      * @param Request $request The request.
      * @param Response $response The response.
-     * @param array $args The query parameters.
      * 
-     * @return Response
+     * @return Response The response.
      */
-    public function index(Request $request, Response $response, array $args): Response
+    public function index(Request $request, Response $response): Response
     {
         return $this->responder->withRedirectFor($response, 'docs');
     }
