@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Messages\Requests\Users;
 
 use App\Data\Entities\UserEntity;
-use App\Validators\Users\UserCreateRequestValidator;
 
 /**
  * User create request data transfer object.
@@ -39,17 +38,15 @@ class UserCreateRequest
      */
     public function __construct(array $request)
     {
-        $validated = new UserCreateRequestValidator($request);
-
-        foreach ($validated->request as $key => $value) {
+        foreach ($request as $key => $value) {
             $this->$key = $value;
         }
     }
 
     /**
-     * Convert @see UserCreateRequest to @see UserEntity
+     * Convert @see UserCreateRequest to @see UserEntity.
      * 
-     * @return UserEntity
+     * @return UserEntity The user entity.
      */
     public function toEntity(): UserEntity
     {

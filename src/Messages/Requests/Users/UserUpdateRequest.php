@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Messages\Requests\Users;
 
 use App\Data\Entities\UserEntity;
-use App\Validators\Users\UserUpdateRequestValidator;
 
 /**
  * User update request data transfer object.
@@ -24,9 +23,7 @@ class UserUpdateRequest extends UserCreateRequest
      */
     public function __construct(array $request)
     {
-        $validated = new UserUpdateRequestValidator($request);
-
-        foreach ($validated->request as $key => $value) {
+        foreach ($request as $key => $value) {
             $this->$key = $value;
         }
     }

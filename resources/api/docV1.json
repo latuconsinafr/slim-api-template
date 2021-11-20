@@ -406,7 +406,9 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "userName"
+                    "userName",
+                    "createdAt",
+                    "updatedAt"
                 ],
                 "properties": {
                     "id": {
@@ -425,6 +427,12 @@
                     "phoneNumber": {
                         "type": "string",
                         "example": "+6282246882912"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/DateTimeImmutable"
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/DateTimeImmutable"
                     }
                 }
             },
@@ -491,6 +499,31 @@
                         "minLength": 4,
                         "maxLength": 16,
                         "example": "secret"
+                    }
+                }
+            },
+            "DateTimeImmutable": {
+                "required": [
+                    "date",
+                    "timezone_type",
+                    "timezone"
+                ],
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The date time",
+                        "example": "2021-11-20 10:03:48.000000"
+                    },
+                    "timezone_type": {
+                        "type": "integer",
+                        "description": "The DateTime object type",
+                        "example": 3
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "description": "The DateTime timezone",
+                        "example": "UTC"
                     }
                 }
             },

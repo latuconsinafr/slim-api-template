@@ -50,7 +50,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function findOne(array $keyValue): ?UserEntity
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository findOne method with key value {$keyValue}.");
+        $this->logger->info("Calling UserRepository findOne method with key value: " . json_encode($keyValue));
 
         return $this->repository->findOne($keyValue);
     }

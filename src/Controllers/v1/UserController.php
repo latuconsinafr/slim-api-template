@@ -12,6 +12,7 @@ use App\Messages\Responses\Users\UserPagedResponse;
 use App\Services\UserService;
 use App\Supports\Loggers\Logger;
 use App\Supports\Responders\ApiResponder;
+use App\Validators\Users\UserValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -27,9 +28,14 @@ final class UserController
     private ApiResponder $responder;
 
     /**
-     * @var UserService The user repository.
+     * @var UserService The user service.
      */
     private UserService $userService;
+
+    /**
+     * @var UserValidator The user validator.
+     */
+    private UserValidator $userValidator;
 
     /**
      * @var LoggerInterface The logger interface.
@@ -39,14 +45,16 @@ final class UserController
     /**
      * The constructor.
      * 
-     * @param Responder $responder The generic responder.
+     * @param ApiResponder $responder The api generic responder.
      * @param UserService $userService The user service.
+     * @param UserValidator $userValidator The user validator.
      * @param Logger $logger The generic logger.
      */
-    public function __construct(ApiResponder $responder, UserService $userService, Logger $logger)
+    public function __construct(ApiResponder $responder, UserService $userService, UserValidator $userValidator, Logger $logger)
     {
         $this->responder = $responder;
         $this->userService = $userService;
+        $this->userValidator = $userValidator;
         $this->logger = $logger->addFileHandler()
             ->addConsoleHandler()
             ->createLogger();
@@ -66,6 +74,7 @@ final class UserController
         $this->logger->info("Try to get users.");
 
         $$queryParams = (array)$request->getQueryParams();
+
         $limit = isset($queryParams['limit']) && $queryParams['limit'] > 0 ? (int)$queryParams['limit'] : 5;
         $pageNumber = isset($queryParams['pageNumber']) && $queryParams['pageNumber'] > 0 ? (int)$queryParams['pageNumber'] : 1;
 
@@ -111,6 +120,8 @@ final class UserController
     {
         $this->logger->info("Try to create user.");
 
+        $this->userValidator->validateCreateRequest((array)$request->getParsedBody());
+
         $request = new UserCreateRequest((array)$request->getParsedBody());
 
         $this->userService->create($request->toEntity());
@@ -131,22 +142,15 @@ final class UserController
     {
         $this->logger->info("Try to update user.");
 
-        $request = new UserUpdateRequest((array)$request->getParsedBody());
+        $this->userValidator->validateUpdateRequest((array)$request->getParsedBody());
 
         $id = $args['id'];
+        $request = new UserUpdateRequest((array)$request->getParsedBody());
 
-        if ($request->id != $id) {
+        if ($id != $request->id) {
             $this->logger->warning("Request conflict with id {$id}.");
 
             return $this->responder->Conflict($response);
-        }
-
-        $user = $this->userService->findById($id);
-
-        if (!$user instanceof UserEntity) {
-            $this->logger->warning("User with id {$id} not found.");
-
-            return $this->responder->NotFound($response);
         }
 
         $this->userService->update($request->toEntity());

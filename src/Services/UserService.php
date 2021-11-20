@@ -110,6 +110,36 @@ class UserService
     }
 
     /**
+     * The find by email service.
+     * 
+     * @param string $email The specified user's email to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
+    public function findByEmail(string $email): ?UserEntity
+    {
+        // Algorithm
+        $this->logger->info("Calling UserService findByEmail method with email {$email}.");
+
+        return $this->userRepository->findOne(['email' => $email]);
+    }
+
+    /**
+     * The find by phone number service.
+     * 
+     * @param string $phoneNumber The specified user's phone number to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
+    public function findByPhoneNumber(string $phoneNumber): ?UserEntity
+    {
+        // Algorithm
+        $this->logger->info("Calling UserService findByPhoneNumber method with phone number {$phoneNumber}.");
+
+        return $this->userRepository->findOne(['phoneNumber' => $phoneNumber]);
+    }
+
+    /**
      * The create user service.
      * 
      * @param UserEntity $user The user entity to create.
