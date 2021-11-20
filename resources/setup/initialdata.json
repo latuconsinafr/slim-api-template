@@ -1,0 +1,39 @@
+{
+    "users": [
+        {
+            "id": "ece0c627-6198-44d9-ac90-7b8517f589ec",
+            "user_name": "user1",
+            "email": "user1@gmail.com",
+            "phone_number": "+6282246924990",
+            "password": "user123"
+        },
+        {
+            "id": "bcea4154-f3b9-433e-b12d-b52649613bad",
+            "user_name": "user2",
+            "email": "user2@gmail.com",
+            "phone_number": "+6281322901280",
+            "password": "user123"
+        },
+        {
+            "id": "3ad17720-f8b3-49ab-ab18-a17c3b02c039",
+            "user_name": "user3",
+            "email": "user3@gmail.com",
+            "phone_number": "+6287720019232",
+            "password": "user123"
+        },
+        {
+            "id": "540fa674-33a9-412b-8f11-f9f25bab3e34",
+            "user_name": "user4",
+            "email": "user4@gmail.com",
+            "phone_number": "+6285789001922",
+            "password": "user123"
+        },
+        {
+            "id": "d9d24268-faaa-4a57-be05-c70a0014e298",
+            "user_name": "user5",
+            "email": "user5@gmail.com",
+            "phone_number": "+62899112212",
+            "password": "user123"
+        }
+    ]
+}
