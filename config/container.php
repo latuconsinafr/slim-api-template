@@ -125,9 +125,9 @@ return [
         $errorMiddleware = new ErrorMiddleware(
             $app->getCallableResolver(),
             $app->getResponseFactory(),
-            (bool)$settings['display_error_details'] ?? false,
-            (bool)$settings['log_errors'] ?? false,
-            (bool)$settings['log_error_details'] ?? false,
+            (bool)filter_var($settings['display_error_details'], FILTER_VALIDATE_BOOLEAN),
+            (bool)filter_var($settings['log_errors'], FILTER_VALIDATE_BOOLEAN),
+            (bool)filter_var($settings['log_error_details'], FILTER_VALIDATE_BOOLEAN)
         );
 
         $errorMiddleware->setDefaultErrorHandler($container->get(ErrorHandler::class));

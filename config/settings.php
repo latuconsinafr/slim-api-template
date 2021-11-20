@@ -33,7 +33,6 @@ $settings = [
         'display_error_details' => $_ENV['ERROR_DISPLAY_DETAILS'],
         'log_errors'            => $_ENV['ERROR_LOG'],
         'log_error_details'     => $_ENV['ERROR_LOG_DETAILS'],
-        'log_filename'          => $_ENV['ERROR_LOG_FILENAME'] . '.log'
     ],
 
     // Logger settings

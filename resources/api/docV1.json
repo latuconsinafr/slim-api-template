@@ -418,10 +418,13 @@
                     },
                     "userName": {
                         "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
                         "example": "latuconsinafr"
                     },
                     "email": {
                         "type": "string",
+                        "format": "email",
                         "example": "faristalatuconsina@gmail.com"
                     },
                     "phoneNumber": {
