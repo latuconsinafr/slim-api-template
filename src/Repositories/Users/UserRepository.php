@@ -30,7 +30,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->transaction = new Transaction($this->orm);
         $this->repository = $orm->getRepository(UserEntity::class);
 
-        $this->fields = ['user_name', 'email', 'phone_number'];
+        $this->fields = array_merge($this->fields, ['user_name', 'email', 'phone_number']);
     }
 
     /** 
@@ -75,7 +75,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->logger->info("Calling UserRepository create method with username {$user->getUserName()}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $this->transaction->persist($user);
@@ -91,13 +91,13 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->logger->info("Calling UserRepository update method with id {$user->getId()}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $userToUpdate = $this->findById($user->getId());
 
         if (!$userToUpdate instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($userToUpdate));
         }
 
         $userToUpdate->setUserName($user->getUserName());
@@ -118,7 +118,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->logger->info("Calling UserRepository delete method with id {$user->getId()}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $this->transaction->delete($user);

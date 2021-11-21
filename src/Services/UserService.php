@@ -64,7 +64,7 @@ class UserService
      * 
      * @return Paged The iterable of @see UserEntity which contains a specified search value with @see Paged object, if any.
      */
-    public function findAllWithQuery(int $limit = 5, int $pageNumber = 1, string $orderByKey = 'id', string $orderByMethod = 'asc', string $search = ''): Paged
+    public function findAllWithQuery(int $limit = 5, int $pageNumber = 1, string $orderByKey = 'createdAt', string $orderByMethod = 'asc', string $search = ''): Paged
     {
         // Algorithm
         $this->logger->info("Calling UserService findAllWithQuery method.");

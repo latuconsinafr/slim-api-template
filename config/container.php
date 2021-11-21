@@ -135,17 +135,20 @@ return [
         return $errorMiddleware;
     },
 
+    // Database manager definition with container interface injection
+    DatabaseManager::class => function (ContainerInterface $container) {
+        if (!isset($container->get('settings')['database'])) throw new ConfigException('Expected database settings.');
+
+        return new DatabaseManager(new DatabaseConfig($container->get('settings')['database']));
+    },
+
     // ORM definition with container interface injection
     ORM::class => function (ContainerInterface $container) {
-        if (!isset($container->get('settings')['database'])) throw new ConfigException('Expected database settings.');
         if (!isset($container->get('settings')['entity'])) throw new ConfigException('Expected entity settings.');
 
-        $database = $container->get('settings')['database'];
-        $entity = $container->get('settings')['entity'];
-
-        $finder = (new Finder())->files()->in([$entity]);
+        $finder = (new Finder())->files()->in([$container->get('settings')['entity']]);
         $classLocator = new ClassLocator($finder);
-        $database = new DatabaseManager(new DatabaseConfig($database));
+        $database = $container->get(DatabaseManager::class);
         $schema = (new Compiler())->compile(new Registry($database), [
             new ResetTables(),              // re-declared table schemas (remove columns)
             new Embeddings($classLocator),  // register embeddable entities
