@@ -56,6 +56,15 @@ $settings = [
                 'connection'    => "mysql:host={$_ENV['DB_HOST']}:{$_ENV['DB_PORT']};dbname={$_ENV['DB_DBNAME']}",
                 'username'      => $_ENV['DB_USERNAME'],
                 'password'      => $_ENV['DB_PASSWORD'],
+            ],
+            'postgres' => [
+                'driver'   => \Spiral\Database\Driver\Postgres\PostgresDriver::class,
+                'options' => [
+                    'connection'    => "pgsql:host={$_ENV['DB_HOST']};dbname={$_ENV['DB_DBNAME']}",
+                    'username'      => $_ENV['DB_USERNAME'],
+                    'password'      => $_ENV['DB_PASSWORD'],
+                    'port'          => $_ENV['DB_PORT']
+                ],
             ]
         ]
     ]

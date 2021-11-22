@@ -49,7 +49,7 @@ class BaseRepository
     /**
      * @var array The entity fields
      */
-    protected array $fields = ['id', 'created_at', 'updated_at'];
+    protected array $fields = ['created_at', 'updated_at'];
 
     /**
      * @param Logger $logger The logger.
@@ -71,7 +71,7 @@ class BaseRepository
 
         $this->select = $this->repository->select();
 
-        foreach ($this->fields as $field) {
+        foreach (array_splice($this->fields, 0, -2) as $field) {
             $this->select = $this->select->orWhere($field, 'like', "%{$value}%");
         }
 

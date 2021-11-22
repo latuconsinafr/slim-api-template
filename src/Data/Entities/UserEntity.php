@@ -40,13 +40,13 @@ class UserEntity extends DataLogEntity
 
     /**
      * @Column(type="string(128)", nullable=true)
-     * @var string
+     * @var string|null
      */
     protected ?string $email;
 
     /**
      * @Column(type="string(32)", name="phone_number", nullable=true)
-     * @var string
+     * @var string|null
      */
     protected ?string $phoneNumber;
 
@@ -59,11 +59,11 @@ class UserEntity extends DataLogEntity
     /**
      * The constructor.
      * 
-     * @param int $id The user's id.
      * @param string $userName The user's user name.
      * @param string|null $email The user's e-mail.
      * @param string|null $phoneNumber The user's phone number.
      * @param string $password The user's password.
+     * @param string|null $id The user's id.
      */
     public function __construct(string $userName, ?string $email, ?string $phoneNumber, string $password, ?string $id = null)
     {
@@ -151,11 +151,11 @@ class UserEntity extends DataLogEntity
     /**
      * The email setter.
      * 
-     * @param string $email The email to set to the user entity.
+     * @param string|null $email The email to set to the user entity.
      * 
      * @return void
      */
-    public function setEmail(string $email): void
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
@@ -163,11 +163,11 @@ class UserEntity extends DataLogEntity
     /**
      * The phone number setter.
      * 
-     * @param string $phoneNumber The phone number to set to the user entity.
+     * @param string|null $phoneNumber The phone number to set to the user entity.
      * 
      * @return void
      */
-    public function setPhoneNumber(string $phoneNumber): void
+    public function setPhoneNumber(?string $phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
     }
