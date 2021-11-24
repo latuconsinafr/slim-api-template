@@ -29,7 +29,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->transaction = new Transaction($orm);
         $this->repository = $orm->getRepository(UserEntity::class);
 
-        $this->fields = array_merge(['id', 'user_name', 'email', 'phone_number'], $this->fields);
+        $this->searchAbleFields = ['id', 'user_name', 'email', 'phone_number'];
+        $this->sortAbleFields = array_merge(['id', 'user_name', 'email', 'phone_number'], $this->sortAbleFields);
     }
 
     /** 

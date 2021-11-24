@@ -42,9 +42,14 @@ class BaseRepository
     protected LoggerInterface $logger;
 
     /**
-     * @var array The entity fields
+     * @var array The entity search able fields.
      */
-    protected array $fields = ['created_at', 'updated_at'];
+    protected array $searchAbleFields = [];
+
+    /**
+     * @var array The entity sort able fields.
+     */
+    protected array $sortAbleFields = ['created_at', 'updated_at'];
 
     /**
      * @param Logger $logger The logger.
@@ -67,7 +72,7 @@ class BaseRepository
         $this->select = $this->repository->select();
 
         // Remove the created_at and update_at from field to search
-        foreach (array_splice($this->fields, 0, -2) as $field) {
+        foreach ($this->searchAbleFields as $field) {
             $this->select = $this->select->orWhere($field, 'like', "%{$value}%");
         }
 
@@ -97,7 +102,7 @@ class BaseRepository
         $key = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $key));
 
         if (
-            in_array($key, $this->fields)
+            in_array($key, $this->sortAbleFields)
             && ($sortMethod == 'ASC'
                 || $sortMethod == 'DESC')
         ) {
