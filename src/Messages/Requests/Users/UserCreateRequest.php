@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Messages\Requests\Users;
 
 use App\Data\Entities\UserEntity;
+use App\Data\TypeCasts\Uuid;
 
 /**
  * User create request data transfer object.
@@ -50,6 +51,14 @@ class UserCreateRequest
      */
     public function toEntity(): UserEntity
     {
-        return new UserEntity($this->userName, $this->email, $this->phoneNumber, $this->password);
+        $user = new UserEntity();
+
+        $user->id = Uuid::create();
+        $user->userName = $this->userName;
+        $user->email = $this->email;
+        $user->phoneNumber = $this->phoneNumber;
+        $user->password = $this->password;
+
+        return $user;
     }
 }

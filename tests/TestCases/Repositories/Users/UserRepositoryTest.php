@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\TestCases\Repositories\Users;
 
 use App\Data\Entities\UserEntity;
+use App\Data\TypeCasts\Uuid;
 use App\Repositories\Users\UserRepositoryInterface;
 use App\Tests\Fixtures\UserFixture;
 use App\Tests\Traits\AppTestTrait;
@@ -37,11 +38,11 @@ final class UserRepositoryTest extends TestCase
 
         foreach ($users as $key => $value) {
             $this->assertInstanceOf(UserEntity::class, $users[$key]);
-            $this->assertEquals($usersSample[$key]->getId(), $users[$key]->getId());
-            $this->assertEquals($usersSample[$key]->getUserName(), $users[$key]->getUserName());
-            $this->assertEquals($usersSample[$key]->getEmail(), $users[$key]->getEmail());
-            $this->assertEquals($usersSample[$key]->getPhoneNumber(), $users[$key]->getPhoneNumber());
-            $this->assertEquals($usersSample[$key]->getPassword(), $users[$key]->getPassword());
+            $this->assertEquals($usersSample[$key]->id, $users[$key]->id);
+            $this->assertEquals($usersSample[$key]->userName, $users[$key]->userName);
+            $this->assertEquals($usersSample[$key]->email, $users[$key]->email);
+            $this->assertEquals($usersSample[$key]->phoneNumber, $users[$key]->phoneNumber);
+            $this->assertEquals($usersSample[$key]->password, $users[$key]->password);
         }
     }
 
@@ -89,7 +90,7 @@ final class UserRepositoryTest extends TestCase
         $repository = $this->container->get(UserRepositoryInterface::class);
         $userFixture = new UserFixture();
 
-        $user = $repository->findById($userFixture->user1Id);
+        $user = $repository->findById(Uuid::fromString($userFixture->user1Id));
 
         $this->assertNotEmpty($user);
         $this->assertNotNull($user);
@@ -105,7 +106,7 @@ final class UserRepositoryTest extends TestCase
     {
         $repository = $this->container->get(UserRepositoryInterface::class);
 
-        $user = $repository->findById('00000000-0000-0000-0000-000000000000');
+        $user = $repository->findById(Uuid::fromString('00000000-0000-0000-0000-000000000000'));
 
         $this->assertEmpty($user);
         $this->assertNull($user);
@@ -122,7 +123,13 @@ final class UserRepositoryTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         $repository = $this->container->get(UserRepositoryInterface::class);
-        $user = new UserEntity('tes', 'tes@gmail.com', '+6282246920112', 'user123');
+        $user = new UserEntity();
+
+        $user->id = Uuid::create();
+        $user->userName = 'tes';
+        $user->email = 'tes@gmail.com';
+        $user->phoneNumber = '+6282246920112';
+        $user->password = 'user123';
 
         $repository->create($user);
     }
@@ -138,7 +145,14 @@ final class UserRepositoryTest extends TestCase
 
         $repository = $this->container->get(UserRepositoryInterface::class);
         $userFixture = new UserFixture();
-        $user = new UserEntity('tes', 'tes@gmail.com', '+6282246920112', 'user123', $userFixture->user1Id);
+
+        $user = new UserEntity();
+
+        $user->id = Uuid::fromString($userFixture->user1Id);
+        $user->userName = 'tes';
+        $user->email = 'tes@gmail.com';
+        $user->phoneNumber = '+6282246920112';
+        $user->password = 'user123';
 
         $repository->create($user);
     }
@@ -154,7 +168,14 @@ final class UserRepositoryTest extends TestCase
 
         $repository = $this->container->get(UserRepositoryInterface::class);
         $userFixture = new UserFixture();
-        $user = new UserEntity('tes', 'tes@gmail.com', '+6282246920112', 'user123', $userFixture->user1Id);
+
+        $user = new UserEntity();
+
+        $user->id = Uuid::fromString($userFixture->user1Id);
+        $user->userName = 'tes1';
+        $user->email = 'tes1@gmail.com';
+        $user->phoneNumber = '+6282246920112';
+        $user->password = 'user123';
 
         $repository->update($user);
     }
@@ -169,7 +190,14 @@ final class UserRepositoryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $repository = $this->container->get(UserRepositoryInterface::class);
-        $user = new UserEntity('tes', 'tes@gmail.com', '+6282246920112', 'user123', '00000000-0000-0000-0000-000000000000');
+
+        $user = new UserEntity();
+
+        $user->id = Uuid::fromString('00000000-0000-0000-0000-000000000000');
+        $user->userName = 'tes1';
+        $user->email = 'tes1@gmail.com';
+        $user->phoneNumber = '+6282246920112';
+        $user->password = 'user123';
 
         $repository->update($user);
     }
@@ -185,7 +213,14 @@ final class UserRepositoryTest extends TestCase
 
         $repository = $this->container->get(UserRepositoryInterface::class);
         $userFixture = new UserFixture();
-        $user = new UserEntity('tes', 'tes@gmail.com', '+6282246920112', 'user123', $userFixture->user1Id);
+
+        $user = new UserEntity();
+
+        $user->id = Uuid::fromString($userFixture->user1Id);
+        $user->userName = 'tes1';
+        $user->email = 'tes1@gmail.com';
+        $user->phoneNumber = '+6282246920112';
+        $user->password = 'user123';
 
         $repository->delete($user);
     }
@@ -200,7 +235,13 @@ final class UserRepositoryTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         $repository = $this->container->get(UserRepositoryInterface::class);
-        $user = new UserEntity('tes', 'tes@gmail.com', '+6282246920112', 'user123', '00000000-0000-0000-0000-000000000000');
+        $user = new UserEntity();
+
+        $user->id = Uuid::fromString('00000000-0000-0000-0000-000000000000');
+        $user->userName = 'tes1';
+        $user->email = 'tes1@gmail.com';
+        $user->phoneNumber = '+6282246920112';
+        $user->password = 'user123';
 
         $repository->delete($user);
     }

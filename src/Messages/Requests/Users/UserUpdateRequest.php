@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Messages\Requests\Users;
 
 use App\Data\Entities\UserEntity;
+use App\Data\TypeCasts\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * User update request data transfer object.
@@ -12,9 +14,9 @@ use App\Data\Entities\UserEntity;
 class UserUpdateRequest extends UserCreateRequest
 {
     /**
-     * @var string The user's id.
+     * @var UuidInterface The user's id.
      */
-    public string $id;
+    public UuidInterface $id;
 
     /**
      * The constructor
@@ -24,7 +26,7 @@ class UserUpdateRequest extends UserCreateRequest
     public function __construct(array $request)
     {
         foreach ($request as $key => $value) {
-            $this->$key = $value;
+            $this->$key = $key === 'id' ? Uuid::fromString($value) : $value;
         }
     }
 
@@ -35,6 +37,14 @@ class UserUpdateRequest extends UserCreateRequest
      */
     public function toEntity(): UserEntity
     {
-        return new UserEntity($this->userName, $this->email, $this->phoneNumber, $this->password, $this->id);
+        $user = new UserEntity();
+
+        $user->id = $this->id;
+        $user->userName = $this->userName;
+        $user->email = $this->email;
+        $user->phoneNumber = $this->phoneNumber;
+        $user->password = $this->password;
+
+        return $user;
     }
 }

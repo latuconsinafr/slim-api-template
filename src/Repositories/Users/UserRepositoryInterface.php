@@ -6,6 +6,7 @@ namespace App\Repositories\Users;
 
 use App\Data\Entities\UserEntity;
 use App\Repositories\BaseRepositoryInterface;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * The user repository interface.
@@ -35,7 +36,7 @@ interface UserRepositoryInterface extends BaseRepositoryInterface
      * 
      * @return UserEntity|null The user entity, if any.
      */
-    public function findById(string $id): ?UserEntity;
+    public function findById(UuidInterface $id): ?UserEntity;
 
     /**
      * The create user repository.

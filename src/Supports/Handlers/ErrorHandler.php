@@ -14,8 +14,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpException;
 use Slim\Interfaces\ErrorHandlerInterface;
-use DomainException;
-use InvalidArgumentException;
 use Throwable;
 
 /**
@@ -24,26 +22,26 @@ use Throwable;
 final class ErrorHandler implements ErrorHandlerInterface
 {
     /**
-     * @var ApiResponder The responder
+     * @var ApiResponder The responder.
      */
     private ApiResponder $responder;
 
     /**
-     * @var ResponseFactoryInterface The response factory
+     * @var ResponseFactoryInterface The response factory.
      */
     private ResponseFactoryInterface $responseFactory;
 
     /**
-     * @var LoggerInterface The logger interface
+     * @var LoggerInterface The logger interface.
      */
     private LoggerInterface $logger;
 
     /**
      * The constructor.
      *
-     * @param ApiResponder $responder The responder
-     * @param ResponseFactoryInterface $responseFactory The response factory
-     * @param Logger $logger The logger
+     * @param ApiResponder $responder The responder.
+     * @param ResponseFactoryInterface $responseFactory The response factory.
+     * @param Logger $logger The logger.
      */
     public function __construct(
         ApiResponder $responder,
@@ -61,13 +59,13 @@ final class ErrorHandler implements ErrorHandlerInterface
     /**
      * Invoke.
      *
-     * @param ServerRequestInterface $request The request
-     * @param Throwable $exception The exception
-     * @param bool $displayErrorDetails Show error details
-     * @param bool $logErrors Log errors
-     * @param bool $logErrorDetails Log error details
+     * @param ServerRequestInterface $request The request.
+     * @param Throwable $exception The exception.
+     * @param bool $displayErrorDetails Show error details.
+     * @param bool $logErrors Log errors.
+     * @param bool $logErrorDetails Log error details.
      *
-     * @return ResponseInterface The response
+     * @return ResponseInterface The response.
      */
     public function __invoke(
         ServerRequestInterface $request,
@@ -76,7 +74,7 @@ final class ErrorHandler implements ErrorHandlerInterface
         bool $logErrors,
         bool $logErrorDetails
     ): ResponseInterface {
-        
+
         // Log errors
         if ($logErrors) {
             $error = $this->getErrorDetails($exception, $logErrorDetails);
@@ -114,7 +112,7 @@ final class ErrorHandler implements ErrorHandlerInterface
         }
 
         // Bad request
-        if ($exception instanceof DomainException || $exception instanceof InvalidArgumentException) {
+        if ($exception instanceof \DomainException || $exception instanceof \InvalidArgumentException) {
             $statusCode = StatusCodeInterface::STATUS_BAD_REQUEST;
         }
 

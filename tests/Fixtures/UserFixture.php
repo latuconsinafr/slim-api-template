@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Fixtures;
 
 use App\Data\Entities\UserEntity;
-use UnexpectedValueException;
+use App\Data\TypeCasts\Uuid;
 
 /**
  * The user test context.
@@ -48,13 +48,20 @@ class UserFixture
         $initialData = __DIR__ . '/../../resources/setup/initialdata.json';
 
         if (!file_exists($initialData)) {
-            throw new UnexpectedValueException('Initial data file not found.');
         }
 
         $initialData = json_decode(file_get_contents($initialData), true);
 
         foreach ($initialData[$this->table] as $value) {
-            $users[] = new UserEntity($value['user_name'], $value['email'], $value['phone_number'], $value['password'], $value['id']);
+            $user = new UserEntity();
+
+            $user->id = Uuid::fromString($value['id']);
+            $user->userName = $value['user_name'];
+            $user->email = $value['email'];
+            $user->phoneNumber = $value['phone_number'];
+            $user->password = $value['password'];
+
+            $users[] = $user;
         }
 
         return $users;

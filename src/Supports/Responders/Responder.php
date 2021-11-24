@@ -16,26 +16,26 @@ use function http_build_query;
 class Responder
 {
     /**
-     * @var PhpRenderer The php renderer
+     * @var PhpRenderer The php renderer.
      */
     protected PhpRenderer $phpRenderer;
 
     /**
-     * @var RouteParserInterface The route parser
+     * @var RouteParserInterface The route parser.
      */
     protected RouteParserInterface $routeParser;
 
     /**
-     * @var ResponseFactoryInterface The response factory
+     * @var ResponseFactoryInterface The response factory.
      */
     protected ResponseFactoryInterface $responseFactory;
 
     /**
      * The constructor.
      *
-     * @param PhpRenderer $phpRenderer The template engine
-     * @param RouteParserInterface $routeParser The route parser
-     * @param ResponseFactoryInterface $responseFactory The response factory
+     * @param PhpRenderer $phpRenderer The template engine.
+     * @param RouteParserInterface $routeParser The route parser.
+     * @param ResponseFactoryInterface $responseFactory The response factory.
      */
     public function __construct(
         PhpRenderer $phpRenderer,
@@ -50,7 +50,7 @@ class Responder
     /**
      * Create a new response.
      *
-     * @return ResponseInterface The response
+     * @return ResponseInterface The response.
      */
     public function createResponse(): ResponseInterface
     {
@@ -60,11 +60,11 @@ class Responder
     /**
      * Output rendered template.
      *
-     * @param ResponseInterface $response The response
-     * @param string $template Template pathname relative to templates directory
-     * @param array $data Associative array of template variables
+     * @param ResponseInterface $response The response.
+     * @param string $template Template pathname relative to templates directory.
+     * @param array $data Associative array of template variables.
      *
-     * @return ResponseInterface The response
+     * @return ResponseInterface The response.
      */
     public function withTemplate(ResponseInterface $response, string $template, array $data = []): ResponseInterface
     {
@@ -77,11 +77,11 @@ class Responder
      * This method prepares the response object to return an HTTP Redirect
      * response to the client.
      *
-     * @param ResponseInterface $response The response
-     * @param string $destination The redirect destination (url or route name)
-     * @param array $queryParams Optional query string parameters
+     * @param ResponseInterface $response The response.
+     * @param string $destination The redirect destination (url or route name).
+     * @param array $queryParams Optional query string parameters.
      *
-     * @return ResponseInterface The response
+     * @return ResponseInterface The response.
      */
     public function withRedirect(
         ResponseInterface $response,
@@ -101,12 +101,12 @@ class Responder
      * This method prepares the response object to return an HTTP Redirect
      * response to the client.
      *
-     * @param ResponseInterface $response The response
-     * @param string $routeName The redirect route name
-     * @param array $data Named argument replacement data
-     * @param array $queryParams Optional query string parameters
+     * @param ResponseInterface $response The response.
+     * @param string $routeName The redirect route name.
+     * @param array $data Named argument replacement data.
+     * @param array $queryParams Optional query string parameters.
      *
-     * @return ResponseInterface The response
+     * @return ResponseInterface The response.
      */
     public function withRedirectFor(
         ResponseInterface $response,
@@ -123,11 +123,11 @@ class Responder
      * This method prepares the response object to return an HTTP JSON
      * response to the client.
      *
-     * @param ResponseInterface $response The response
-     * @param mixed $data The data
+     * @param ResponseInterface $response The response.
+     * @param mixed $data The data..
      * @param int $options Json encoding options
      *
-     * @return ResponseInterface The response
+     * @return ResponseInterface The response.
      */
     public function withJson(
         ResponseInterface $response,

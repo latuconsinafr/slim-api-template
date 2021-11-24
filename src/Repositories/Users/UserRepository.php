@@ -9,7 +9,7 @@ use App\Repositories\BaseRepository;
 use App\Supports\Loggers\Logger;
 use Cycle\ORM\ORM;
 use Cycle\ORM\Transaction;
-use InvalidArgumentException;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * The user repository.
@@ -26,8 +26,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     {
         parent::__construct($logger);
 
-        $this->orm = $orm;
-        $this->transaction = new Transaction($this->orm);
+        $this->transaction = new Transaction($orm);
         $this->repository = $orm->getRepository(UserEntity::class);
 
         $this->fields = array_merge(['id', 'user_name', 'email', 'phone_number'], $this->fields);
@@ -58,7 +57,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function findById(string $id): ?UserEntity
+    public function findById(UuidInterface $id): ?UserEntity
     {
         // Algorithm
         $this->logger->info("Calling UserRepository findById method with id {$id}.");
@@ -72,10 +71,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function create(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository create method with username {$user->getUserName()}.");
+        $this->logger->info("Calling UserRepository create method with username {$user->userName}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $this->transaction->persist($user);
@@ -88,22 +87,22 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function update(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository update method with id {$user->getId()}.");
+        $this->logger->info("Calling UserRepository update method with id {$user->id}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
-        $userToUpdate = $this->findById($user->getId());
+        $userToUpdate = $this->findById($user->id);
 
         if (!$userToUpdate instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($userToUpdate));
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($userToUpdate));
         }
 
-        $userToUpdate->setUserName($user->getUserName());
-        $userToUpdate->setEmail($user->getEmail());
-        $userToUpdate->setPhoneNumber($user->getPhoneNumber());
-        $userToUpdate->setPassword($user->getPassword());
+        $userToUpdate->userName = $user->userName;
+        $userToUpdate->email = $user->email;
+        $userToUpdate->phoneNumber = $user->phoneNumber;
+        $userToUpdate->password = $user->password;
 
         $this->transaction->persist($userToUpdate);
         $this->run();
@@ -115,10 +114,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function delete(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository delete method with id {$user->getId()}.");
+        $this->logger->info("Calling UserRepository delete method with id {$user->id}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $this->transaction->delete($user);

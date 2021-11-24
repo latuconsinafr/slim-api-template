@@ -9,13 +9,9 @@ use Cycle\ORM\Heap\Node;
 use Cycle\ORM\Heap\State;
 use Cycle\ORM\Command\Database\Update;
 use Cycle\ORM\Command\ContextCarrierInterface;
-use Cycle\Annotated\Annotation\Column;
-use Cycle\Annotated\Annotation\Table;
 
 /**
- * @Table(
- *  columns={"created_at": @Column(type = "datetime"), "updated_at": @Column(type = "datetime")},
- * )
+ * The time stamp mapper.
  */
 class TimestampedMapper extends Mapper
 {
@@ -26,7 +22,7 @@ class TimestampedMapper extends Mapper
      * @param Node $node The node.
      * @param State $state The state.
      * 
-     * @return ContextCarrierInterface
+     * @return ContextCarrierInterface The context carrier interface.
      */
     public function queueCreate($entity, Node $node, State $state): ContextCarrierInterface
     {
@@ -48,7 +44,7 @@ class TimestampedMapper extends Mapper
      * @param Node $node The node.
      * @param State $state The state.
      * 
-     * @return ContextCarrierInterface
+     * @return ContextCarrierInterface The context carrier interface.
      */
     public function queueUpdate($entity, Node $node, State $state): ContextCarrierInterface
     {

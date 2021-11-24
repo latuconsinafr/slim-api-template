@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Validators\Users;
 
 use App\Data\Entities\UserEntity;
+use App\Data\TypeCasts\Uuid;
 use App\Services\UserService;
 use App\Supports\Responders\StatusMessageInterface;
 use Cake\Validation\Validator;
@@ -140,7 +141,7 @@ class UserValidator
      */
     private function isUserIdNotExists(array $request, ValidationResult $validationResult, string $field, ?string $message = 'User not found.'): ValidationResult
     {
-        if (!$this->userService->findById($request[$field]) instanceof UserEntity) {
+        if (!$this->userService->findById(Uuid::fromString($request[$field])) instanceof UserEntity) {
             $validationResult->addError($field, $message);
         }
 
@@ -161,7 +162,7 @@ class UserValidator
     {
         $user = $this->userService->findByUserName($request[$field]);
 
-        if ($user instanceof UserEntity xor (!is_null($idField) && ($user->getId() == $request[$idField]))) {
+        if ($user instanceof UserEntity xor (!is_null($idField) && ($user->id == $request[$idField]))) {
             $validationResult->addError($field, $message);
         }
 
@@ -182,7 +183,7 @@ class UserValidator
     {
         $user = $this->userService->findByEmail($request[$field]);
 
-        if ($user instanceof UserEntity xor (!is_null($idField) && ($user->getId() == $request[$idField]))) {
+        if ($user instanceof UserEntity xor (!is_null($idField) && ($user->id == $request[$idField]))) {
             $validationResult->addError($field, $message);
         }
 
@@ -203,7 +204,7 @@ class UserValidator
     {
         $user = $this->userService->findByPhoneNumber($request[$field]);
 
-        if ($user instanceof UserEntity xor (!is_null($idField) && ($user->getId() == $request[$idField]))) {
+        if ($user instanceof UserEntity xor (!is_null($idField) && ($user->id == $request[$idField]))) {
             $validationResult->addError($field, $message);
         }
 

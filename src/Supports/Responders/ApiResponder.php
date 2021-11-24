@@ -7,7 +7,6 @@ namespace App\Supports\Responders;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Selective\Validation\Exception\ValidationException;
 use Selective\Validation\ValidationResult;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\PhpRenderer;
@@ -20,9 +19,9 @@ final class ApiResponder extends Responder
     /**
      * The constructor.
      *
-     * @param PhpRenderer $phpRenderer The template engine
-     * @param RouteParserInterface $routeParser The route parser
-     * @param ResponseFactoryInterface $responseFactory The response factory
+     * @param PhpRenderer $phpRenderer The template engine.
+     * @param RouteParserInterface $routeParser The route parser.
+     * @param ResponseFactoryInterface $responseFactory The response factory.
      */
     public function __construct(
         PhpRenderer $phpRenderer,

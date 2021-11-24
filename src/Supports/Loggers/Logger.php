@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Supports\Loggers;
 
+use App\Data\TypeCasts\Uuid;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger as MonologLogger;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Logger.
@@ -58,7 +58,7 @@ final class Logger
      */
     public function createLogger(?string $name = null): LoggerInterface
     {
-        $logger = new MonologLogger($name ?: UUID::uuid4()->toString());
+        $logger = new MonologLogger($name ?: (string)Uuid::create());
 
         foreach ($this->handler as $handler) {
             $logger->pushHandler($handler);
@@ -86,10 +86,10 @@ final class Logger
     /**
      * Add rotating file logger handler.
      *
-     * @param string $filename The filename
-     * @param int|null $level The level (optional)
+     * @param string|null $filename The filename (optional).
+     * @param int|null $level The level (optional).
      *
-     * @return self The logger factory
+     * @return self The logger factory.
      */
     public function addFileHandler(?string $filename = null, ?int $level = null): self
     {
@@ -109,9 +109,9 @@ final class Logger
     /**
      * Add a console logger.
      *
-     * @param int|null $level The level (optional)
+     * @param int|null $level The level (optional).
      *
-     * @return self The logger factory
+     * @return self The logger factory.
      */
     public function addConsoleHandler(?int $level = null): self
     {

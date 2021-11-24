@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Data;
 
-use ArrayIterator;
-
 /**
  * The generic paged.
  */
@@ -29,12 +27,12 @@ class Paged
     /**
      * @var int The total data.
      */
-    public int $totalCount;
+    public int $totalCount = 0;
 
     /**
      * @var int The total pages.
      */
-    public int $totalPages;
+    public int $totalPages = 0;
 
     /**
      * @var bool The flag indicates whether has previous page or not.
@@ -70,7 +68,7 @@ class Paged
 
         // TODO: Fixed this count and results after the pagination exceeding the total pages
         if ($this->pageNumber <= $this->totalPages) {
-            $this->count = iterator_count(new ArrayIterator($results));
+            $this->count = iterator_count(new \ArrayIterator($results));
             $this->results = $results;
         }
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Messages\Responses\Users;
 
 use App\Data\Entities\UserEntity;
-use DateTimeImmutable;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * Responder for single user data.
@@ -13,9 +13,9 @@ use DateTimeImmutable;
 class UserDetailResponse
 {
     /**
-     * @var string The user's id.
+     * @var UuidInterface The user's id.
      */
-    public string $id;
+    public UuidInterface $id;
 
     /**
      * @var string The user's user name.
@@ -33,14 +33,14 @@ class UserDetailResponse
     public ?string $phoneNumber;
 
     /**
-     * @var DateTimeImmutable The user's created at.
+     * @var \DateTimeImmutable The user's created at.
      */
-    public DateTimeImmutable $createdAt;
+    public \DateTimeImmutable $createdAt;
 
     /**
-     * @var DateTimeImmutable The user's updated at.
+     * @var \DateTimeImmutable The user's updated at.
      */
-    public DateTimeImmutable $updatedAt;
+    public \DateTimeImmutable $updatedAt;
 
     /**
      * The constructor.
@@ -50,12 +50,12 @@ class UserDetailResponse
     public function __construct(?UserEntity $user)
     {
         if ($user instanceof UserEntity) {
-            $this->id = $user->getId();
-            $this->userName = $user->getUserName();
-            $this->email = $user->getEmail();
-            $this->phoneNumber = $user->getPhoneNumber();
-            $this->createdAt = $user->getCreatedAt();
-            $this->updatedAt = $user->getUpdatedAt();
+            $this->id = $user->id;
+            $this->userName = $user->userName;
+            $this->email = $user->email;
+            $this->phoneNumber = $user->phoneNumber;
+            $this->createdAt = $user->createdAt;
+            $this->updatedAt = $user->updatedAt;
         }
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Data;
 
-use DateTimeImmutable;
+use Cycle\Annotated\Annotation\Column;
 
 /**
  * The generic data log entity.
@@ -12,32 +12,16 @@ use DateTimeImmutable;
 class DataLogEntity
 {
     /**
-     * @var DateTimeImmutable The resource created at timestamp.
-     */
-    protected ?DateTimeImmutable $created_at = null;
-
-    /**
-     * @var DateTimeImmutable The resource updated at timestamp.
-     */
-    protected ?DateTimeImmutable $updated_at = null;
-
-    /**
-     * The created at getter.
+     * @Column(type="datetime", name="created_at", default="now")
      * 
-     * @return DateTimeImmutable The timestamp.
+     * @var \DateTimeImmutable The resource created at timestamp.
      */
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->created_at;
-    }
+    public ?\DateTimeImmutable $createdAt = null;
 
     /**
-     * The update at getter.
+     * @Column(type="datetime", name="updated_at", default="now")
      * 
-     * @return DateTimeImmutable The timestamp.
+     * @var \DateTimeImmutable The resource updated at timestamp.
      */
-    public function getUpdatedAt(): DateTimeImmutable
-    {
-        return $this->updated_at;
-    }
+    public ?\DateTimeImmutable $updatedAt = null;
 }

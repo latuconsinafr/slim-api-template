@@ -17,11 +17,6 @@ use Spiral\Pagination\Paginator;
 class BaseRepository
 {
     /**
-     * @var ORM The cycle orm.
-     */
-    protected ORM $orm;
-
-    /**
      * @var Transaction The cycle orm transaction.
      */
     protected Transaction $transaction;
@@ -71,6 +66,7 @@ class BaseRepository
 
         $this->select = $this->repository->select();
 
+        // Remove the created_at and update_at from field to search
         foreach (array_splice($this->fields, 0, -2) as $field) {
             $this->select = $this->select->orWhere($field, 'like', "%{$value}%");
         }

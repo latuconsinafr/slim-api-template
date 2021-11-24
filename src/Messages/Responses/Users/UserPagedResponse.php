@@ -20,7 +20,7 @@ class UserPagedResponse
     /**
      * @var iterable The iterable of @see User.
      */
-    public iterable $results;
+    public iterable $results = [];
 
     /**
      * The constructor.
@@ -35,8 +35,6 @@ class UserPagedResponse
             foreach ($paged->results as $user) {
                 $this->results[] = new UserDetailResponse($user);
             }
-        } else {
-            $this->results = [];
         }
     }
 }

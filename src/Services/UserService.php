@@ -8,8 +8,8 @@ use App\Data\Entities\UserEntity;
 use App\Data\Paged;
 use App\Repositories\Users\UserRepositoryInterface;
 use App\Supports\Loggers\Logger;
-use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * The user service.
@@ -86,7 +86,7 @@ class UserService
      * 
      * @return UserEntity|null The user entity, if any.
      */
-    public function findById(string $id): ?UserEntity
+    public function findById(UuidInterface $id): ?UserEntity
     {
         // Algorithm
         $this->logger->info("Calling UserService findById method with id {$id}.");
@@ -149,10 +149,10 @@ class UserService
     public function create(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserService create method with username {$user->getUserName()}.");
+        $this->logger->info("Calling UserService create method with username {$user->userName}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $this->userRepository->create($user);
@@ -168,10 +168,10 @@ class UserService
     public function update(UserEntity $user): void
     {
         // Algorithm
-        $this->logger->info("Calling UserService update method with id {$user->getId()}.");
+        $this->logger->info("Calling UserService update method with id {$user->id}.");
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $this->userRepository->update($user);
@@ -184,7 +184,7 @@ class UserService
      * 
      * @return void
      */
-    public function delete(string $id): void
+    public function delete(UuidInterface $id): void
     {
         // Algorithm
         $this->logger->info("Calling UserService delete method with id {$id}.");
@@ -192,7 +192,7 @@ class UserService
         $user = $this->findById($id);
 
         if (!$user instanceof UserEntity) {
-            throw new InvalidArgumentException("User is not an instance of UserEntity. Input was: {$user}");
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
         $this->userRepository->delete($user);

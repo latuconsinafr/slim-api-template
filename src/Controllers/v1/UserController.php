@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers\v1;
 
 use App\Data\Entities\UserEntity;
+use App\Data\TypeCasts\Uuid;
 use App\Messages\Requests\Users\UserCreateRequest;
 use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
@@ -96,7 +97,7 @@ final class UserController
     {
         $this->logger->info("Try to get user.");
 
-        $id = $args['id'];
+        $id = Uuid::fromString($args['id']);
         $user = $this->userService->findById($id);
 
         if (!$user instanceof UserEntity) {
@@ -144,7 +145,7 @@ final class UserController
 
         $this->userValidator->validateUpdateRequest((array)$request->getParsedBody());
 
-        $id = $args['id'];
+        $id = Uuid::fromString($args['id']);
         $request = new UserUpdateRequest((array)$request->getParsedBody());
 
         if ($id != $request->id) {
@@ -171,7 +172,7 @@ final class UserController
     {
         $this->logger->info("Try to delete user.");
 
-        $id = $args['id'];
+        $id = Uuid::fromString($args['id']);
         $user = $this->userService->findById($id);
 
         if (!$user instanceof UserEntity) {
