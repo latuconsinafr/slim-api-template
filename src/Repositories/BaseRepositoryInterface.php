@@ -10,6 +10,15 @@ namespace App\Repositories;
 interface BaseRepositoryInterface
 {
     /**
+     * Initiate the query method.
+     * 
+     * @param array $criteria The explicit where criteria to apply.
+     * 
+     * @return BaseRepository The repository.
+     */
+    public function query(array $criteria = []): BaseRepository;
+
+    /**
      * The search method.
      * 
      * @param string $value The value to search.
@@ -17,13 +26,6 @@ interface BaseRepositoryInterface
      * @return BaseRepository The repository.
      */
     public function search(string $value = ''): BaseRepository;
-
-    /**
-     * The count method.
-     * 
-     * @return int The total count of selected data.
-     */
-    public function count(): int;
 
     /**
      * The order by method.
@@ -51,4 +53,11 @@ interface BaseRepositoryInterface
      * @return iterable The result from selected data.
      */
     public function fetchAll(): iterable;
+
+    /**
+     * The count method.
+     * 
+     * @return int The total count of selected data.
+     */
+    public function count(): int;
 }

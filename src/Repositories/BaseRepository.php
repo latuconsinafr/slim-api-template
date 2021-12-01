@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Supports\Loggers\Logger;
-use Cycle\ORM\{ORM, Select, Transaction};
+use Cycle\ORM\{Select, Transaction};
 use Cycle\ORM\Select\Repository;
 use Psr\Log\LoggerInterface;
 use Spiral\Database\Exception\StatementException\{ConnectionException, ConstrainException};
@@ -42,6 +42,11 @@ class BaseRepository
     protected LoggerInterface $logger;
 
     /**
+     * @var array The where criteria.
+     */
+    protected array $criteria = [];
+
+    /**
      * @var array The entity search able fields.
      */
     protected array $searchAbleFields = [];
@@ -64,30 +69,39 @@ class BaseRepository
     /**
      * @inheritdoc
      */
+    public function query(array $criteria = []): BaseRepository
+    {
+        // Algorithm
+        $this->logger->info("Calling BaseRepository query method with criteria: " . json_encode($criteria));
+
+        $this->criteria = $criteria;
+        $this->select = $this->repository->select();
+
+        return $this;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
     public function search(string $value = ''): BaseRepository
     {
         // Algorithm
         $this->logger->info("Calling BaseRepository search method with value {$value}.");
 
-        $this->select = $this->repository->select();
+        if ($value != '') {
+            foreach ($this->searchAbleFields as $field) {
+                $this->select = $this->select->orWhere($field, 'like', "%{$value}%");
+            }
+        }
 
-        // Remove the created_at and update_at from field to search
-        foreach ($this->searchAbleFields as $field) {
-            $this->select = $this->select->orWhere($field, 'like', "%{$value}%");
+        if (!empty($this->criteria)) {
+            $this->select->where(function (\Cycle\ORM\Select\QueryBuilder $select) {
+                $select->andWhere($this->criteria);
+            });
         }
 
         return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function count(): int
-    {
-        // Algorithm
-        $this->logger->info("Calling BaseRepository count method.");
-
-        return $this->repository->select()->count();
     }
 
     /**
@@ -137,6 +151,17 @@ class BaseRepository
         $this->logger->info("Calling BaseRepository fetchAll method.");
 
         return $this->select->fetchAll();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function count(): int
+    {
+        // Algorithm
+        $this->logger->info("Calling BaseRepository count method.");
+
+        return $this->repository->select()->count();
     }
 
     /**

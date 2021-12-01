@@ -47,12 +47,24 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function findOne(array $keyValue): ?UserEntity
+    public function find(array $criteria): iterable
     {
         // Algorithm
-        $this->logger->info("Calling UserRepository findOne method with key value: " . json_encode($keyValue));
+        $this->logger->info("Calling UserRepository find method with criteria: " . json_encode($criteria));
 
-        return $this->repository->findOne($keyValue);
+        return $this->repository->select()->where($criteria)->load($this->relations)->fetchAll();
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function findOne(array $criteria): ?UserEntity
+    {
+        // Algorithm
+        $this->logger->info("Calling UserRepository findOne method with criteria: " . json_encode($criteria));
+
+        return $this->repository->select()->where($criteria)->load($this->relations)->fetchOne();
     }
 
     /**

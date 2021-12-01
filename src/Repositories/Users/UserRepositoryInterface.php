@@ -14,20 +14,29 @@ use Ramsey\Uuid\UuidInterface;
 interface UserRepositoryInterface extends BaseRepositoryInterface
 {
     /**
-     * The get all users with pagination repository.
+     * The get all users repository.
      * 
      * @return iterable The iterable of @see UserEntity, if any.
      */
     public function findAll(): iterable;
 
     /**
-     * The get specified user by specified key value.
+     * The get all users with criteria repository.
      * 
-     * @param array $keyValue The key value pair to find.
+     * @param array $criteria The criteria to apply.
+     * 
+     * @return iterable The iterable of @see UserEntity, if any.
+     */
+    public function find(array $criteria): iterable;
+
+    /**
+     * The get specified user by specified criteria.
+     * 
+     * @param array $criteria The criteria to apply.
      * 
      * @return UserEntity|null The user entity, if any.
      */
-    public function findOne(array $keyValue): ?UserEntity;
+    public function findOne(array $criteria): ?UserEntity;
 
     /**
      * The get specified user by id repository.
