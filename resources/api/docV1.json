@@ -29,6 +29,57 @@
             "name": "User"
         }
     ],
+    "parameters": {
+        "limitParameter": {
+            "name": "limit",
+            "in": "query",
+            "description": "The page limit.",
+            "schema": {
+                "type": "integer"
+            },
+            "example": 5
+        },
+        "pageNumberParameter": {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "The current page number.",
+            "schema": {
+                "type": "integer"
+            },
+            "example": 1
+        },
+        "orderByKeyParameter": {
+            "name": "orderByKey",
+            "in": "query",
+            "description": "The field to set the order by.",
+            "schema": {
+                "type": "string"
+            },
+            "example": "createdAt"
+        },
+        "orderByMethodParameter": {
+            "name": "orderByMethod",
+            "in": "query",
+            "description": "The order by method, whether it is ascending (asc) or descending (desc).",
+            "schema": {
+                "type": "string",
+                "enum": [
+                    "asc",
+                    "desc"
+                ]
+            },
+            "example": "asc"
+        },
+        "searchParameter": {
+            "name": "search",
+            "in": "query",
+            "description": "The value to search.",
+            "schema": {
+                "type": "string"
+            },
+            "example": ""
+        }
+    },
     "paths": {
         "/users": {
             "get": {
@@ -38,6 +89,23 @@
                 "summary": "List of user",
                 "description": "Get list of users.",
                 "operationId": "getUsers",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/limitParameter"
+                    },
+                    {
+                        "$ref": "#/parameters/pageNumberParameter"
+                    },
+                    {
+                        "$ref": "#/parameters/orderByKeyParameter"
+                    },
+                    {
+                        "$ref": "#/parameters/orderByMethodParameter"
+                    },
+                    {
+                        "$ref": "#/parameters/searchParameter"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -505,31 +573,6 @@
                     }
                 }
             },
-            "DateTimeImmutable": {
-                "required": [
-                    "date",
-                    "timezone_type",
-                    "timezone"
-                ],
-                "properties": {
-                    "date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The date time",
-                        "example": "2021-11-20 10:03:48.000000"
-                    },
-                    "timezone_type": {
-                        "type": "integer",
-                        "description": "The DateTime object type",
-                        "example": 3
-                    },
-                    "timezone": {
-                        "type": "string",
-                        "description": "The DateTime timezone",
-                        "example": "UTC"
-                    }
-                }
-            },
             "Paged": {
                 "required": [
                     "limit",
@@ -575,6 +618,31 @@
                         "type": "boolean",
                         "description": "The flag indicates whether has next page or not.",
                         "example": true
+                    }
+                }
+            },
+            "DateTimeImmutable": {
+                "required": [
+                    "date",
+                    "timezone_type",
+                    "timezone"
+                ],
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The date time",
+                        "example": "2021-11-20 10:03:48.000000"
+                    },
+                    "timezone_type": {
+                        "type": "integer",
+                        "description": "The DateTime object type",
+                        "example": 3
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "description": "The DateTime timezone",
+                        "example": "UTC"
                     }
                 }
             },

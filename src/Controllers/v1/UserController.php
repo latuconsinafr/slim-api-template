@@ -74,13 +74,16 @@ final class UserController
     {
         $this->logger->info("Try to get users.");
 
-        $$queryParams = (array)$request->getQueryParams();
+        $queryParams = (array)$request->getQueryParams();
 
         $limit = isset($queryParams['limit']) && $queryParams['limit'] > 0 ? (int)$queryParams['limit'] : 5;
         $pageNumber = isset($queryParams['pageNumber']) && $queryParams['pageNumber'] > 0 ? (int)$queryParams['pageNumber'] : 1;
+        $orderByKey = isset($queryParams['orderByKey']) ? $queryParams['orderByKey'] : 'createdAt';
+        $orderByMethod = isset($queryParams['orderByMethod']) ? $queryParams['orderByMethod'] : 'asc';
+        $search = isset($queryParams['search']) ? $queryParams['search'] : '';
 
         return $this->responder->OK($response, new UserPagedResponse(
-            $this->userService->findAllWithQuery($limit, $pageNumber)
+            $this->userService->findAllWithQuery($limit, $pageNumber, $orderByKey, $orderByMethod, $search)
         ));
     }
 

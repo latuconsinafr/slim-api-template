@@ -35,7 +35,7 @@ interface BaseRepositoryInterface
      * 
      * @return BaseRepository The repository.
      */
-    public function orderBy(string $key = 'id', $sortMethod = 'DESC'): BaseRepository;
+    public function orderBy(string $key = 'id', $sortMethod = 'asc'): BaseRepository;
 
     /**
      * The paginate method.
