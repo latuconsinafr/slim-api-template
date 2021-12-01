@@ -13,7 +13,7 @@ use App\Messages\Responses\Users\UserPagedResponse;
 use App\Services\UserService;
 use App\Supports\Loggers\Logger;
 use App\Supports\Responders\ApiResponder;
-use App\Validators\Users\UserValidator;
+use App\Validators\UserValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;

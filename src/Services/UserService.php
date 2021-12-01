@@ -61,19 +61,22 @@ class UserService
      * @param string $orderByKey The order by key.
      * @param string $orderByMethod The order by method.
      * @param string $search The value to search.
+     * @param array $criteria the where criteria to apply.
      * 
      * @return Paged The iterable of @see UserEntity which contains a specified search value with @see Paged object, if any.
      */
-    public function findAllWithQuery(int $limit = 5, int $pageNumber = 1, string $orderByKey = 'createdAt', string $orderByMethod = 'asc', string $search = ''): Paged
+    public function findAllWithQuery(int $limit = 5, int $pageNumber = 1, string $orderByKey = 'createdAt', string $orderByMethod = 'asc', string $search = '', array $criteria = []): Paged
     {
         // Algorithm
         $this->logger->info("Calling UserService findAllWithQuery method.");
 
         $results = $this->userRepository
+            ->query($criteria)
             ->search($search)
             ->orderBy($orderByKey, $orderByMethod)
             ->paginate($limit, $pageNumber)
             ->fetchAll();
+
         $count = $this->userRepository->count();
 
         return new Paged($limit, $pageNumber, $count, $results);

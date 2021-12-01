@@ -23,7 +23,7 @@ interface UserCustomValidatorInterface
      * 
      * @return ValidationResult The validation result.
      */
-    public function isUserIdNotExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $message = 'User not found.');
+    public function isUserIdNotExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $message = 'User not found');
 
     /**
      * The user exists by user name validator.
@@ -37,7 +37,7 @@ interface UserCustomValidatorInterface
      * 
      * @return ValidationResult The validation result.
      */
-    public function isUserNameExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $idField = null, ?string $message = 'User name is already taken.');
+    public function isUserNameExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $idField = null, ?string $message = 'User name is already taken');
 
     /**
      * The user exists by email validator.
@@ -51,7 +51,7 @@ interface UserCustomValidatorInterface
      * 
      * @return ValidationResult The validation result.
      */
-    public function isEmailExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $idField = null, ?string $message = 'Email address is already taken.');
+    public function isEmailExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $idField = null, ?string $message = 'Email address is already taken');
 
     /**
      * The user exists by phone number validator.
@@ -65,5 +65,5 @@ interface UserCustomValidatorInterface
      * 
      * @return ValidationResult The validation result.
      */
-    public function isPhoneNumberExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $idField = null, ?string $message = 'Phone number is already taken.');
+    public function isPhoneNumberExists(array $request, string $field, UserService $service, ValidationResult $result, ?string $idField = null, ?string $message = 'Phone number is already taken');
 }
