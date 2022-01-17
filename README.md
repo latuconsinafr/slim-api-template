@@ -23,7 +23,7 @@ Basically, you want to set up your environment variables inside the `.env` file 
 php -S localhost:<your_lovely_port_here> -t public/
 ```
 
-If you want to run the database seeder, make sure that you've set up the initial data inside the `resources\setup` folder with the `initialdata.json` name to your appropriate database structur (according to your table(s) and column(s) name) and then change your directory to the <strong>Data</strong> folder and run a command:
+If you want to run the database seeder, make sure that you've set up the initial data inside the `resources\setup` folder with the `initialdata.json` name to your appropriate database structur (according to your table(s) and column(s) name) and then run the following command:
 ```
 php src/Supports/Seeder.php
 ```
