@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\TestCases\Repositories\Users;
+namespace App\Tests\TestCases\Services\Users;
 
 use App\Data\Entities\UserEntity;
 use App\Data\TypeCasts\Uuid;
-use App\Repositories\Users\UserRepositoryInterface;
+use App\Services\UserService;
 use App\Tests\Fixtures\UserFixture;
 use App\Tests\Traits\AppTestTrait;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * User Repository Test.
+ * User Service Test.
  */
-final class UserRepositoryTest extends TestCase
+final class UserServiceTest extends TestCase
 {
     use AppTestTrait;
 
@@ -26,13 +26,13 @@ final class UserRepositoryTest extends TestCase
      */
     public function testFindAll(): void
     {
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
         $userFixture = new UserFixture();
 
         $usersSample = $userFixture->getUsers();
         $count = count((array)$usersSample);
 
-        $users = $repository->findAll();
+        $users = $service->findAll();
 
         $this->assertCount($count, $users);
 
@@ -47,50 +47,16 @@ final class UserRepositoryTest extends TestCase
     }
 
     /**
-     * The findOne positive scenario test: found.
-     * 
-     * @return void
-     */
-    public function testFindOne_found(): void
-    {
-        $repository = $this->container->get(UserRepositoryInterface::class);
-        $userFixture = new UserFixture();
-
-        $user = $repository->findOne(['userName' => $userFixture->user1UserName]);
-
-        $this->assertNotEmpty($user);
-        $this->assertNotNull($user);
-        $this->assertInstanceOf(UserEntity::class, $user);
-    }
-
-    /**
-     * The findOne negative scenario test: not found.
-     * 
-     * @return void
-     */
-    public function testFindOne_notFound(): void
-    {
-        $repository = $this->container->get(UserRepositoryInterface::class);
-        $userFixture = new UserFixture();
-
-        $user = $repository->findOne(['email' => $userFixture->user1PhoneNumber]);
-
-        $this->assertEmpty($user);
-        $this->assertNull($user);
-        $this->assertNotInstanceOf(UserEntity::class, $user);
-    }
-
-    /**
      * The findById positive scenario test: found.
      * 
      * @return void
      */
     public function testFindById_found(): void
     {
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
         $userFixture = new UserFixture();
 
-        $user = $repository->findById(Uuid::fromString($userFixture->user1Id));
+        $user = $service->findById(Uuid::fromString($userFixture->user1Id));
 
         $this->assertNotEmpty($user);
         $this->assertNotNull($user);
@@ -104,9 +70,111 @@ final class UserRepositoryTest extends TestCase
      */
     public function testFindById_notFound(): void
     {
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
 
-        $user = $repository->findById(Uuid::fromString('00000000-0000-0000-0000-000000000000'));
+        $user = $service->findById(Uuid::fromString('00000000-0000-0000-0000-000000000000'));
+
+        $this->assertEmpty($user);
+        $this->assertNull($user);
+        $this->assertNotInstanceOf(UserEntity::class, $user);
+    }
+
+    /**
+     * The findByUserName positive scenario test: found.
+     * 
+     * @return void
+     */
+    public function testFindByUserName_found(): void
+    {
+        $service = $this->container->get(UserService::class);
+        $userFixture = new UserFixture();
+
+        $user = $service->findByUserName($userFixture->user1UserName);
+
+        $this->assertNotEmpty($user);
+        $this->assertNotNull($user);
+        $this->assertInstanceOf(UserEntity::class, $user);
+    }
+
+    /**
+     * The findByUserName negative scenario test: not found.
+     * 
+     * @return void
+     */
+    public function testFindByUserName_notFound(): void
+    {
+        $service = $this->container->get(UserService::class);
+        $userFixture = new UserFixture();
+
+        $user = $service->findByUserName($userFixture->user1PhoneNumber);
+
+        $this->assertEmpty($user);
+        $this->assertNull($user);
+        $this->assertNotInstanceOf(UserEntity::class, $user);
+    }
+
+    /**
+     * The findByEmail positive scenario test: found.
+     * 
+     * @return void
+     */
+    public function testFindByEmail_found(): void
+    {
+        $service = $this->container->get(UserService::class);
+        $userFixture = new UserFixture();
+
+        $user = $service->findByEmail($userFixture->user1Email);
+
+        $this->assertNotEmpty($user);
+        $this->assertNotNull($user);
+        $this->assertInstanceOf(UserEntity::class, $user);
+    }
+
+    /**
+     * The findByEmail negative scenario test: not found.
+     * 
+     * @return void
+     */
+    public function testFindByEmail_notFound(): void
+    {
+        $service = $this->container->get(UserService::class);
+        $userFixture = new UserFixture();
+
+        $user = $service->findByEmail($userFixture->user1UserName);
+
+        $this->assertEmpty($user);
+        $this->assertNull($user);
+        $this->assertNotInstanceOf(UserEntity::class, $user);
+    }
+
+    /**
+     * The findByPhoneNumber positive scenario test: found.
+     * 
+     * @return void
+     */
+    public function testFindByPhoneNumber_found(): void
+    {
+        $service = $this->container->get(UserService::class);
+        $userFixture = new UserFixture();
+
+        $user = $service->findByPhoneNumber($userFixture->user1PhoneNumber);
+
+        $this->assertNotEmpty($user);
+        $this->assertNotNull($user);
+        $this->assertInstanceOf(UserEntity::class, $user);
+    }
+
+    /**
+     * The findByPhoneNumber negative scenario test: not found.
+     * 
+     * @return void
+     */
+    public function testFindByPhoneNumber_notFound(): void
+    {
+        $service = $this->container->get(UserService::class);
+        $userFixture = new UserFixture();
+
+        $user = $service->findByPhoneNumber($userFixture->user1Email);
 
         $this->assertEmpty($user);
         $this->assertNull($user);
@@ -120,9 +188,7 @@ final class UserRepositoryTest extends TestCase
      */
     public function testCreate_created(): void
     {
-        $this->expectNotToPerformAssertions();
-
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
         $user = new UserEntity();
 
         $user->id = Uuid::create();
@@ -131,7 +197,11 @@ final class UserRepositoryTest extends TestCase
         $user->phoneNumber = '+6282246920112';
         $user->password = 'user123';
 
-        $repository->create($user);
+        $result = $service->create($user);
+
+        $this->assertNotEmpty($result);
+        $this->assertNotNull($result);
+        $this->assertInstanceOf(UserEntity::class, $result);
     }
 
     /**
@@ -143,7 +213,7 @@ final class UserRepositoryTest extends TestCase
     {
         $this->expectException(\Spiral\Database\Exception\StatementException\ConstrainException::class);
 
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
         $userFixture = new UserFixture();
 
         $user = new UserEntity();
@@ -154,7 +224,7 @@ final class UserRepositoryTest extends TestCase
         $user->phoneNumber = '+6282246920112';
         $user->password = 'user123';
 
-        $repository->create($user);
+        $service->create($user);
     }
 
     /**
@@ -164,9 +234,7 @@ final class UserRepositoryTest extends TestCase
      */
     public function testUpdate_updated(): void
     {
-        $this->expectNotToPerformAssertions();
-
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
         $userFixture = new UserFixture();
 
         $user = new UserEntity();
@@ -177,7 +245,11 @@ final class UserRepositoryTest extends TestCase
         $user->phoneNumber = '+6282246920112';
         $user->password = 'user123';
 
-        $repository->update($user);
+        $result = $service->update($user);
+
+        $this->assertNotEmpty($result);
+        $this->assertNotNull($result);
+        $this->assertTrue($result);
     }
 
     /**
@@ -189,7 +261,7 @@ final class UserRepositoryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
 
         $user = new UserEntity();
 
@@ -199,7 +271,7 @@ final class UserRepositoryTest extends TestCase
         $user->phoneNumber = '+6282246920112';
         $user->password = 'user123';
 
-        $repository->update($user);
+        $service->update($user);
     }
 
     /**
@@ -209,20 +281,14 @@ final class UserRepositoryTest extends TestCase
      */
     public function testDelete_deleted(): void
     {
-        $this->expectNotToPerformAssertions();
-
-        $repository = $this->container->get(UserRepositoryInterface::class);
+        $service = $this->container->get(UserService::class);
         $userFixture = new UserFixture();
 
-        $user = new UserEntity();
+        $result = $service->delete(Uuid::fromString($userFixture->user1Id));
 
-        $user->id = Uuid::fromString($userFixture->user1Id);
-        $user->userName = 'tes1';
-        $user->email = 'tes1@gmail.com';
-        $user->phoneNumber = '+6282246920112';
-        $user->password = 'user123';
-
-        $repository->delete($user);
+        $this->assertNotEmpty($result);
+        $this->assertNotNull($result);
+        $this->assertTrue($result);
     }
 
     /**
@@ -232,17 +298,10 @@ final class UserRepositoryTest extends TestCase
      */
     public function testDelete_idDoesNotExist(): void
     {
-        $this->expectNotToPerformAssertions();
+        $this->expectException(InvalidArgumentException::class);
 
-        $repository = $this->container->get(UserRepositoryInterface::class);
-        $user = new UserEntity();
+        $service = $this->container->get(UserService::class);
 
-        $user->id = Uuid::fromString('00000000-0000-0000-0000-000000000000');
-        $user->userName = 'tes1';
-        $user->email = 'tes1@gmail.com';
-        $user->phoneNumber = '+6282246920112';
-        $user->password = 'user123';
-
-        $repository->delete($user);
+        $service->delete(Uuid::fromString('00000000-0000-0000-0000-000000000000'));
     }
 }

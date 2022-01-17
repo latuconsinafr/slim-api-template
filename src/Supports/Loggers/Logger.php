@@ -33,6 +33,12 @@ final class Logger
     private int $level;
 
     /**
+     * @var bool The flag indicates logger in testing environment or not, 
+     * true if the logger is in testing environment, otherwise false.
+     */
+    private bool $test;
+
+    /**
      * @var array The log handler.
      */
     private array $handler = [];
@@ -47,6 +53,7 @@ final class Logger
         $this->path = (string)($settings['path'] ?? '');
         $this->filename = (string)($settings['filename'] ?? 'app.log');
         $this->level = (int)($settings['level'] ?? MonologLogger::INFO);
+        $this->test = (bool)($settings['test_environment']) ?? false;
     }
 
     /**
@@ -60,8 +67,13 @@ final class Logger
     {
         $logger = new MonologLogger($name ?: (string)Uuid::create());
 
-        foreach ($this->handler as $handler) {
-            $logger->pushHandler($handler);
+        // Environment conditional
+        if (!$this->test) {
+            foreach ($this->handler as $handler) {
+                $logger->pushHandler($handler);
+            }
+        } else {
+            $logger->pushHandler(new \Monolog\Handler\NullHandler());
         }
 
         $this->handler = [];

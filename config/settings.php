@@ -42,6 +42,7 @@ $settings = [
         'filename'          => $_ENV['LOGGER_NAME'] . '.log',
         'level'             => $_ENV['LOGGER_DEBUG'] ? \Monolog\Logger::DEBUG : \Monolog\Logger::INFO,
         'file_permission'   => 0775,
+        'test_environment'  => ($_ENV['APP_ENVIRONMENT'] == 'test') ? true : false,
     ],
 
     // Database settings
