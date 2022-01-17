@@ -55,8 +55,8 @@ class PaginatedInfo
      */
     public function __construct(PaginatedParam $paginatedParam, int $count, iterable $results)
     {
-        $this->pageNumber = $paginatedParam->pageNumber;
         $this->limit = $paginatedParam->limit;
+        $this->pageNumber = $paginatedParam->pageNumber;
         $this->totalCount = $count;
         $this->totalPages = (int)ceil($count / $paginatedParam->limit);
         $this->hasPreviousPage =  $paginatedParam->pageNumber <= 1 || $paginatedParam->pageNumber > $this->totalPages ? false : true;

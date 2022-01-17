@@ -112,7 +112,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserPagedResponse"
+                                    "$ref": "#/components/schemas/UserPaginatedResponse"
                                 }
                             }
                         }
@@ -452,14 +452,14 @@
             }
         },
         "schemas": {
-            "UserPagedResponse": {
+            "UserPaginatedResponse": {
                 "required": [
-                    "pageInfo",
+                    "paginatedInfo",
                     "results"
                 ],
                 "properties": {
-                    "pageInfo": {
-                        "$ref": "#/components/schemas/Paged"
+                    "paginatedInfo": {
+                        "$ref": "#/components/schemas/PaginatedInfo"
                     },
                     "results": {
                         "type": "array",
@@ -573,7 +573,23 @@
                     }
                 }
             },
-            "Paged": {
+            "Paginated": {
+                "required": [
+                    "paginatedInfo",
+                    "results"
+                ],
+                "properties": {
+                    "paginatedInfo": {
+                        "$ref": "#/components/schemas/PaginatedInfo"
+                    },
+                    "results": {
+                        "type": "array",
+                        "description": "Iterable of entity",
+                        "items": {}
+                    }
+                }
+            },
+            "PaginatedInfo": {
                 "required": [
                     "limit",
                     "pageNumber",
