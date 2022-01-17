@@ -12,7 +12,7 @@ use App\Supports\Loggers\Logger;
 use Cycle\ORM\ORM;
 use Cycle\ORM\Select\Repository;
 use Cycle\ORM\Transaction;
-use Ramsey\Uuid\Rfc4122\UuidInterface;
+use Ramsey\Uuid\UuidInterface;
 use Spiral\Pagination\Paginator;
 
 class UserService
@@ -39,6 +39,11 @@ class UserService
         $this->sortAbleFields = ['id', 'user_name', 'email', 'phone_number', 'created_at', 'updated_at'];
     }
 
+    /**
+     * The find all service.
+     * 
+     * @return iterable The iterable of @see UserEntity.
+     */
     public function findAll(): iterable
     {
         // Algorithm
@@ -47,6 +52,13 @@ class UserService
         return $this->userRepository->findAll();
     }
 
+    /**
+     * The find all with query parameters service.
+     * 
+     * @param PaginatedParam $paginatedParam The paginated param.
+     * 
+     * @return Paginated The paginated result which contains @see PaginatedInfo and iterable of @see UserEntity, if any.
+     */
     public function findAllWithQuery(PaginatedParam $paginatedParam): Paginated
     {
         // Algorithm
@@ -68,7 +80,7 @@ class UserService
             && ($paginatedParam->orderByMethod == 'ASC'
                 || $paginatedParam->orderByMethod == 'DESC')
         ) {
-            $this->select = $this->select->orderBy($orderByKey, $paginatedParam->orderByMethod);
+            $select = $select->orderBy($orderByKey, $paginatedParam->orderByMethod);
         }
 
         // Paginate
@@ -78,12 +90,18 @@ class UserService
         // Results & Count
         $results = $select->fetchAll();
         $count = $this->userRepository->select()->count();
-
         $pageInfo = new PaginatedInfo($paginatedParam, $count, $results);
 
         return new Paginated($pageInfo, $results);
     }
 
+    /**
+     * The find by id service.
+     * 
+     * @param UuidInterface $id The specified user's id to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
     public function findById(UuidInterface $id): ?UserEntity
     {
         // Algorithm
@@ -92,6 +110,13 @@ class UserService
         return $this->userRepository->findByPK($id);
     }
 
+    /**
+     * The find by user name service.
+     * 
+     * @param string $userName The specified user's user name to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
     public function findByUserName(string $userName): ?UserEntity
     {
         // Algorithm
@@ -100,6 +125,13 @@ class UserService
         return $this->userRepository->findOne(['userName' => $userName]);
     }
 
+    /**
+     * The find by email service.
+     * 
+     * @param string $email The specified user's email to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
     public function findByEmail(string $email): ?UserEntity
     {
         // Algorithm
@@ -108,6 +140,13 @@ class UserService
         return $this->userRepository->findOne(['email' => $email]);
     }
 
+    /**
+     * The find by phone number service.
+     * 
+     * @param string $phoneNumber The specified user's phone number to find.
+     * 
+     * @return UserEntity|null The user entity, if any.
+     */
     public function findByPhoneNumber(string $phoneNumber): ?UserEntity
     {
         // Algorithm
@@ -116,6 +155,13 @@ class UserService
         return $this->userRepository->findOne(['phoneNumber' => $phoneNumber]);
     }
 
+    /**
+     * The create user service.
+     * 
+     * @param UserEntity $user The user entity to create.
+     * 
+     * @return UserEntity The created user entity.
+     */
     public function create(UserEntity $user): UserEntity
     {
         // Algorithm
@@ -131,6 +177,13 @@ class UserService
         return $user;
     }
 
+    /**
+     * The update user service.
+     * 
+     * @param UserEntity $user The user entity to update.
+     * 
+     * @return bool The flag indicates the update process status, return true if success, otherwise false.
+     */
     public function update(UserEntity $user): bool
     {
         // Algorithm
@@ -157,6 +210,13 @@ class UserService
         return true;
     }
 
+    /**
+     * The delete user service.
+     * 
+     * @param UuidInterface $id The specified user's id to delete.
+     * 
+     * @return bool The flag indicates the delete process status, return true if success, otherwise false.
+     */
     public function delete(UuidInterface $id): bool
     {
         // Algorithm

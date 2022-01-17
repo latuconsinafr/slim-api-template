@@ -46,6 +46,13 @@ class PaginatedInfo
      */
     public bool $hasNextPage;
 
+    /**
+     * The constructor.
+     * 
+     * @param PaginatedParam $paginatedParam The paginated param.
+     * @param int $count The total data in current page.
+     * @param iterable $results The iterable of entity.
+     */
     public function __construct(PaginatedParam $paginatedParam, int $count, iterable $results)
     {
         $this->pageNumber = $paginatedParam->pageNumber;

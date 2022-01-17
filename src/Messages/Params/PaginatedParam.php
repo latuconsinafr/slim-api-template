@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Messages\Params;
 
+/**
+ * Paginated param for pagination.
+ */
 class PaginatedParam
 {
     /**

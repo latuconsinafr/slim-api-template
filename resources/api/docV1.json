@@ -60,15 +60,15 @@
         "orderByMethodParameter": {
             "name": "orderByMethod",
             "in": "query",
-            "description": "The order by method, whether it is ascending (asc) or descending (desc).",
+            "description": "The order by method, whether it is ascending (ASC) or descending (DESC).",
             "schema": {
                 "type": "string",
                 "enum": [
-                    "asc",
-                    "desc"
+                    "ASC",
+                    "DESC"
                 ]
             },
-            "example": "asc"
+            "example": "ASC"
         },
         "searchParameter": {
             "name": "search",

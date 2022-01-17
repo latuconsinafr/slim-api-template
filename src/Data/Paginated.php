@@ -19,6 +19,12 @@ class Paginated
      */
     public iterable $results = [];
 
+    /**
+     * The constructor.
+     * 
+     * @param PaginatedInfo $paginatedInfo The paginated info.
+     * @param iterable $results The iterable of entity.
+     */
     public function __construct(PaginatedInfo $paginatedInfo, iterable $results)
     {
         $this->paginatedInfo = $paginatedInfo;

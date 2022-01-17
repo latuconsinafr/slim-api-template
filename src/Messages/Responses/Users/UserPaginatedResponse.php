@@ -7,10 +7,15 @@ namespace App\Messages\Responses\Users;
 use App\Data\Paginated;
 
 /**
- * The user response with pagination.
+ * Responder for paginated user data.
  */
 class UserPaginatedResponse extends Paginated
 {
+    /**
+     * The constructor.
+     * 
+     * @param Paginated $paginated The paginated result.
+     */
     public function __construct(Paginated $paginated)
     {
         $this->paginatedInfo = $paginated->paginatedInfo;
