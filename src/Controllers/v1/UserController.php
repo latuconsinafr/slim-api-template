@@ -6,10 +6,11 @@ namespace App\Controllers\v1;
 
 use App\Data\Entities\UserEntity;
 use App\Data\TypeCasts\Uuid;
+use App\Messages\Params\PaginatedParam;
 use App\Messages\Requests\Users\UserCreateRequest;
 use App\Messages\Requests\Users\UserUpdateRequest;
 use App\Messages\Responses\Users\UserDetailResponse;
-use App\Messages\Responses\Users\UserPagedResponse;
+use App\Messages\Responses\Users\UserPaginatedResponse;
 use App\Services\UserService;
 use App\Supports\Loggers\Logger;
 use App\Supports\Responders\ApiResponder;
@@ -76,14 +77,16 @@ final class UserController
 
         $queryParams = (array)$request->getQueryParams();
 
-        $limit = isset($queryParams['limit']) && $queryParams['limit'] > 0 ? (int)$queryParams['limit'] : 5;
-        $pageNumber = isset($queryParams['pageNumber']) && $queryParams['pageNumber'] > 0 ? (int)$queryParams['pageNumber'] : 1;
-        $orderByKey = isset($queryParams['orderByKey']) ? $queryParams['orderByKey'] : 'createdAt';
-        $orderByMethod = isset($queryParams['orderByMethod']) ? $queryParams['orderByMethod'] : 'asc';
-        $search = isset($queryParams['search']) ? $queryParams['search'] : '';
+        $paginatedParam = new PaginatedParam();
 
-        return $this->responder->OK($response, new UserPagedResponse(
-            $this->userService->findAllWithQuery($limit, $pageNumber, $orderByKey, $orderByMethod, $search)
+        $paginatedParam->limit = isset($queryParams['limit']) && $queryParams['limit'] > 0 ? (int)$queryParams['limit'] : 5;
+        $paginatedParam->pageNumber = isset($queryParams['pageNumber']) && $queryParams['pageNumber'] > 0 ? (int)$queryParams['pageNumber'] : 1;
+        $paginatedParam->orderByKey = isset($queryParams['orderByKey']) ? $queryParams['orderByKey'] : 'createdAt';
+        $paginatedParam->orderByMethod = isset($queryParams['orderByMethod']) ? $queryParams['orderByMethod'] : 'ASC';
+        $paginatedParam->search = isset($queryParams['search']) ? $queryParams['search'] : '';
+
+        return $this->responder->OK($response, new UserPaginatedResponse(
+            $this->userService->findAllWithQuery($paginatedParam)
         ));
     }
 

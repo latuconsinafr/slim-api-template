@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Repositories\Users\UserRepository;
-use App\Repositories\Users\UserRepositoryInterface;
+use App\Services\UserService;
 use App\Supports\Handlers\ErrorHandler;
 use App\Supports\Loggers\Logger;
 use Cycle\Annotated\{Embeddings, Entities, MergeColumns, MergeIndexes};
@@ -168,7 +167,6 @@ return [
         return $orm;
     },
 
-    // Repositories definition with user repository injection
-    UserRepositoryInterface::class => DI\create(UserRepository::class)
-        ->constructor(DI\get(ORM::class), DI\get(Logger::class))
+    // Services definition with ORM and Logger injection
+    UserService::class => DI\create()->constructor(DI\get(ORM::class), DI\get(Logger::class))
 ];

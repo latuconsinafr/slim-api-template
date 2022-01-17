@@ -5,46 +5,40 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Data\Entities\UserEntity;
-use App\Data\Paged;
-use App\Repositories\Users\UserRepositoryInterface;
+use App\Data\Paginated;
+use App\Data\PaginatedInfo;
+use App\Messages\Params\PaginatedParam;
 use App\Supports\Loggers\Logger;
-use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\UuidInterface;
+use Cycle\ORM\ORM;
+use Cycle\ORM\Select\Repository;
+use Cycle\ORM\Transaction;
+use Ramsey\Uuid\Rfc4122\UuidInterface;
+use Spiral\Pagination\Paginator;
 
-/**
- * The user service.
- */
 class UserService
 {
     /**
-     * @var UserRepositoryInterface The user repository interface.
+     * @var Transaction The generic cycle orm transaction.
      */
-    private UserRepositoryInterface $userRepository;
+    private Transaction $transaction;
 
     /**
-     * @var LoggerInterface The logger interface.
+     * @var Repository The user repository.
      */
-    private LoggerInterface $logger;
+    private Repository $userRepository;
 
-    /**
-     * The constructor.
-     * 
-     * @param UserRepositoryInterface $userRepository The user repository.
-     * @param Logger $logger The generic logger.
-     */
-    public function __construct(UserRepositoryInterface $userRepository, Logger $logger)
+    public function __construct(ORM $orm, Logger $logger)
     {
-        $this->userRepository = $userRepository;
+        $this->transaction = new Transaction($orm);
+        $this->userRepository = $orm->getRepository(UserEntity::class);
         $this->logger = $logger->addFileHandler()
             ->addConsoleHandler()
             ->createLogger();
+
+        $this->searchAbleFields = ['id', 'user_name', 'email', 'phone_number'];
+        $this->sortAbleFields = ['id', 'user_name', 'email', 'phone_number', 'created_at', 'updated_at'];
     }
 
-    /**
-     * The find all service.
-     * 
-     * @return iterable The iterable of @see UserEntity.
-     */
     public function findAll(): iterable
     {
         // Algorithm
@@ -53,57 +47,51 @@ class UserService
         return $this->userRepository->findAll();
     }
 
-    /**
-     * The find all with query parameters service.
-     * 
-     * @param int $limit The page limit.
-     * @param int $pageNumber The current page number.
-     * @param string $orderByKey The order by key.
-     * @param string $orderByMethod The order by method.
-     * @param string $search The value to search.
-     * @param array $criteria the where criteria to apply.
-     * 
-     * @return Paged The iterable of @see UserEntity which contains a specified search value with @see Paged object, if any.
-     */
-    public function findAllWithQuery(int $limit = 5, int $pageNumber = 1, string $orderByKey = 'createdAt', string $orderByMethod = 'asc', string $search = '', array $criteria = []): Paged
+    public function findAllWithQuery(PaginatedParam $paginatedParam): Paginated
     {
         // Algorithm
         $this->logger->info("Calling UserService findAllWithQuery method.");
 
-        $results = $this->userRepository
-            ->query($criteria)
-            ->search($search)
-            ->orderBy($orderByKey, $orderByMethod)
-            ->paginate($limit, $pageNumber)
-            ->fetchAll();
+        $select = $this->userRepository->select();
 
-        $count = $this->userRepository->count();
+        // Search
+        if ($paginatedParam->search != '') {
+            foreach ($this->searchAbleFields as $field) {
+                $select = $select->orWhere($field, 'like', "%{$paginatedParam->search}%");
+            }
+        }
 
-        return new Paged($limit, $pageNumber, $count, $results);
+        // Order By
+        $orderByKey = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $paginatedParam->orderByKey));
+        if (
+            in_array($orderByKey, $this->sortAbleFields)
+            && ($paginatedParam->orderByMethod == 'ASC'
+                || $paginatedParam->orderByMethod == 'DESC')
+        ) {
+            $this->select = $this->select->orderBy($orderByKey, $paginatedParam->orderByMethod);
+        }
+
+        // Paginate
+        $paginator = new Paginator($paginatedParam->limit);
+        $paginator->withPage(($paginatedParam->pageNumber))->paginate($select);
+
+        // Results & Count
+        $results = $select->fetchAll();
+        $count = $this->userRepository->select()->count();
+
+        $pageInfo = new PaginatedInfo($paginatedParam, $count, $results);
+
+        return new Paginated($pageInfo, $results);
     }
 
-    /**
-     * The find by id service.
-     * 
-     * @param string $id The specified user's id to find.
-     * 
-     * @return UserEntity|null The user entity, if any.
-     */
     public function findById(UuidInterface $id): ?UserEntity
     {
         // Algorithm
         $this->logger->info("Calling UserService findById method with id {$id}.");
 
-        return $this->userRepository->findById($id);
+        return $this->userRepository->findByPK($id);
     }
 
-    /**
-     * The find by user name service.
-     * 
-     * @param string $userName The specified user's user name to find.
-     * 
-     * @return UserEntity|null The user entity, if any.
-     */
     public function findByUserName(string $userName): ?UserEntity
     {
         // Algorithm
@@ -112,13 +100,6 @@ class UserService
         return $this->userRepository->findOne(['userName' => $userName]);
     }
 
-    /**
-     * The find by email service.
-     * 
-     * @param string $email The specified user's email to find.
-     * 
-     * @return UserEntity|null The user entity, if any.
-     */
     public function findByEmail(string $email): ?UserEntity
     {
         // Algorithm
@@ -127,13 +108,6 @@ class UserService
         return $this->userRepository->findOne(['email' => $email]);
     }
 
-    /**
-     * The find by phone number service.
-     * 
-     * @param string $phoneNumber The specified user's phone number to find.
-     * 
-     * @return UserEntity|null The user entity, if any.
-     */
     public function findByPhoneNumber(string $phoneNumber): ?UserEntity
     {
         // Algorithm
@@ -142,14 +116,7 @@ class UserService
         return $this->userRepository->findOne(['phoneNumber' => $phoneNumber]);
     }
 
-    /**
-     * The create user service.
-     * 
-     * @param UserEntity $user The user entity to create.
-     * 
-     * @return void
-     */
-    public function create(UserEntity $user): void
+    public function create(UserEntity $user): UserEntity
     {
         // Algorithm
         $this->logger->info("Calling UserService create method with username {$user->userName}.");
@@ -158,36 +125,39 @@ class UserService
             throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
-        $this->userRepository->create($user);
+        $this->transaction->persist($user);
+        $this->transaction->run();
+
+        return $user;
     }
 
-    /**
-     * The update user service.
-     * 
-     * @param UserEntity $user The user entity to update.
-     * 
-     * @return void
-     */
-    public function update(UserEntity $user): void
+    public function update(UserEntity $user): bool
     {
         // Algorithm
         $this->logger->info("Calling UserService update method with id {$user->id}.");
+
+        $userToUpdate = $this->findById($user->id);
 
         if (!$user instanceof UserEntity) {
             throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
-        $this->userRepository->update($user);
+        if (!$userToUpdate instanceof UserEntity) {
+            throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($userToUpdate));
+        }
+
+        $userToUpdate->userName = $user->userName;
+        $userToUpdate->email = $user->email;
+        $userToUpdate->phoneNumber = $user->phoneNumber;
+        $userToUpdate->password = $user->password;
+
+        $this->transaction->persist($userToUpdate);
+        $this->transaction->run();
+
+        return true;
     }
 
-    /**
-     * The delete user service.
-     * 
-     * @param string $id The specified user's id to delete.
-     * 
-     * @return void
-     */
-    public function delete(UuidInterface $id): void
+    public function delete(UuidInterface $id): bool
     {
         // Algorithm
         $this->logger->info("Calling UserService delete method with id {$id}.");
@@ -198,6 +168,9 @@ class UserService
             throw new \InvalidArgumentException("User is not an instance of UserEntity. Input was: " . json_encode($user));
         }
 
-        $this->userRepository->delete($user);
+        $this->transaction->delete($user);
+        $this->transaction->run();
+
+        return true;
     }
 }
